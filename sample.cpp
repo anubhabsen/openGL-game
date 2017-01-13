@@ -81,7 +81,7 @@ void moveelem(Sprite *temp, float dx, float dy)
     {
       return;
     }
-    if(temp->y < -3.5 && dy < 0)
+    if(temp->y < -4.5 && dy < 0)
     {
       return;
     }
