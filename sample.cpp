@@ -58,8 +58,8 @@ typedef struct Sprite Sprite;
 
 map <string, Sprite> bricks;
 map <string, Sprite> collect_baskets;
-map <string, Sprite> cannon;
-map <string, Sprite> ray;
+map <string, Sprite> turret;
+map <string, Sprite> laser;
 map <string, Sprite> mirror;
 
 GLuint programID;
@@ -68,14 +68,22 @@ int score = 0;
 
 void moveelem(Sprite *temp, float dx, float dy)
 {
-    if(temp->x > 3 && dx > 0)
-        return;
-    if(temp->x < -3 && dx < 0)
-        return;
-    if(temp->y > 3.5 && dy > 0)
-        return;
-    if(temp->y < -3.5 && dy < 0)
-        return;
+    if(temp->x + dx > 3.4)
+    {
+      return;
+    }
+    if(temp->x + dx < -3.4)
+    {
+      return;
+    }
+    if(temp->y + dy > 3.5)
+    {
+      return;
+    }
+    if(temp->y + dy < -3.5)
+    {
+      return;
+    }
     temp->x += dx;
     temp->y += dy;
 }
