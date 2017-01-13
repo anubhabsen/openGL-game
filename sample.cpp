@@ -79,7 +79,32 @@ void rotateStuff(Sprite *gun, float dx, float dy, float angle)
     return;
   }
   gun->y += dy;
-  gun->angle = angle;
+  if(gun->angle <= -50)
+  {
+    if(angle > 0)
+    {
+      gun->angle += angle;
+    }
+    else
+    {
+      return;
+    }
+  }
+  else if(gun->angle >= 50)
+  {
+    if(angle < 0)
+    {
+      gun->angle += angle;
+    }
+    else
+    {
+      return;
+    }
+  }
+  else
+  {
+    gun->angle += angle;
+  }
 }
 
 void moveelem(Sprite *temp, float dx, float dy)
@@ -284,6 +309,13 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
             case GLFW_KEY_DOWN:
                 rotateStuff(&turret["turretcanon"], 0, -0.3, 0);
                 rotateStuff(&turret["turretbase"], 0, -0.3, 0);
+                break;
+            case GLFW_KEY_T:
+                rotateStuff(&turret["turretcanon"], 0, 0, 10);
+                break;
+            case GLFW_KEY_G:
+                rotateStuff(&turret["turretcanon"], 0, 0, -10);
+                break;
             case GLFW_KEY_X:
             default:
                 break;
@@ -507,7 +539,7 @@ void draw ()
     /* Render your scene */
     glm::mat4 ObjectTransform;
     glm::mat4 translateObject = glm::translate (glm::vec3(turret[current].x, turret[current].y, 0.0f)); // glTranslatef
-    glm::mat4 rotateTriangle = glm::rotate((float)((turret[current].angle)*M_PI/180.0f), glm::vec3(0,1,0));  // rotate about vector (1,0,0)
+    glm::mat4 rotateTriangle = glm::rotate((float)((turret[current].angle)*M_PI/180.0f), glm::vec3(0,0,1));  // rotate about vector (1,0,0)
 
     ObjectTransform=translateObject*rotateTriangle;
     Matrices.model *= ObjectTransform;
