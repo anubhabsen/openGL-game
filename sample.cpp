@@ -6,6 +6,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <time.h>
+#include <ctime>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -40,8 +41,8 @@ struct COLOR {
     float b;
 };
 typedef struct COLOR color;
-COLOR red = {1, 0, 0};
-COLOR green = {0, 1, 0};
+COLOR red = {0.882, 0.3333, 0.3333};
+COLOR green = {0.1255, 0.75, 0.333};
 COLOR black = {30 / 255.0, 30 / 255.0, 21 / 255.0};
 
 struct Sprite {
@@ -76,11 +77,11 @@ void moveelem(Sprite *temp, float dx, float dy)
     {
       return;
     }
-    if(temp->y + dy > 3.5)
+    if(temp->y > 3.5 && dy > 0)
     {
       return;
     }
-    if(temp->y + dy < -3.5)
+    if(temp->y < -3.5 && dy < 0)
     {
       return;
     }
@@ -247,21 +248,19 @@ void draw3DObject (struct VAO* vao)
 /* Prefered for Keyboard events */
 void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-     // Function is called first on GLFW_PRESS.
-
     if (action == GLFW_RELEASE) {
         switch (key) {
             case GLFW_KEY_A:
-                moveelem(&collect_baskets["redbasket"], -0.2, 0);
+                moveelem(&collect_baskets["redbasket"], -0.1, 0);
                 break;
             case GLFW_KEY_D:
-                moveelem(&collect_baskets["redbasket"], 0.2, 0);
+                moveelem(&collect_baskets["redbasket"], 0.1, 0);
                 break;
             case GLFW_KEY_J:
-                moveelem(&collect_baskets["greenbasket"], -0.2, 0);
+                moveelem(&collect_baskets["greenbasket"], -0.1, 0);
                 break;
             case GLFW_KEY_L:
-                moveelem(&collect_baskets["greenbasket"], 0.2, 0);
+                moveelem(&collect_baskets["greenbasket"], 0.1, 0);
                 break;
             default:
                 break;
@@ -283,6 +282,8 @@ void keyboardChar (GLFWwindow* window, unsigned int key)
 {
 	switch (key) {
 		case 'Q':
+            quit(window);
+            break;
 		case 'q':
             quit(window);
             break;
@@ -334,7 +335,7 @@ void reshapeWindow (GLFWwindow* window, int width, int height)
 }
 
 // Creates the rectangle object used in this sample code
-void createRectangle (string name, float x, float y, float width, float height, COLOR mycolor, string type)
+void createRectangle (string name, float x, float y, float width, float height, COLOR colour, string type)
 {
   // create3DObject creates and returns a handle to a VAO that can be used later
   float w = width/2, h = height/2;
@@ -349,18 +350,18 @@ void createRectangle (string name, float x, float y, float width, float height, 
     };
 
   GLfloat color_buffer_data [] = {
-        mycolor.r, mycolor.g, mycolor.b, // color 1
-        mycolor.r, mycolor.g, mycolor.b, // color 2
-        mycolor.r, mycolor.g, mycolor.b, // color 3
+        colour.r, colour.g, colour.b, // color 1
+        colour.r, colour.g, colour.b, // color 2
+        colour.r, colour.g, colour.b, // color 3
 
-        mycolor.r, mycolor.g, mycolor.b, // color 4
-        mycolor.r, mycolor.g, mycolor.b, // color 5
-        mycolor.r, mycolor.g, mycolor.b // color 6
+        colour.r, colour.g, colour.b, // color 4
+        colour.r, colour.g, colour.b, // color 5
+        colour.r, colour.g, colour.b // color 6
     };
 
   VAO *rectangle = create3DObject(GL_TRIANGLES, 6, vertex_buffer_data, color_buffer_data, GL_FILL);
   Sprite elem = {};
-  elem.color = mycolor;
+  elem.color = colour;
   elem.exists = 1;
   elem.name = name;
   elem.object = rectangle;
@@ -370,9 +371,13 @@ void createRectangle (string name, float x, float y, float width, float height, 
   elem.width = width;
 
   if(type=="basket")
+  {
     collect_baskets[name] = elem;
+  }
   else if(type=="brick")
+  {
     bricks[name] = elem;
+  }
 }
 
 float camera_rotation_angle = 90;
@@ -408,9 +413,10 @@ void draw ()
 
   /* Render your scene */
   //draw baskets
-  for(map<string,Sprite>::iterator it=collect_baskets.begin(); it!=collect_baskets.end(); it++){
+  for(map<string,Sprite>::iterator it=collect_baskets.begin(); it!=collect_baskets.end(); it++)
+  {
         string current = it->first; //The name of the current object
-        if(collect_baskets[current].exists==0)
+        if(collect_baskets[current].exists == 0)
             continue;
         glm::mat4 MVP;	// MVP = Projection * View * Model
 
@@ -523,7 +529,7 @@ void initGL (GLFWwindow* window, int width, int height)
   reshapeWindow(window, width, height);
 
   // Background color of the scene
-  glClearColor(1.0f, 1.0f, 1.0f, 0.0f); // R, G, B, A
+  glClearColor(0.88f, 0.74f, 0.16f, 0.0f); // R, G, B, A
   glClearDepth(1.0f);
 
   glEnable(GL_DEPTH_TEST);
@@ -558,10 +564,6 @@ void blockFall()
 
   stringstream ss;
   ss << numblocks;
-  //cout << ss.str() << endl;
-  //cout << randx << endl;
-  //cout << rc << endl;
-  //cout << numblocks << endl;
   createRectangle(ss.str(), randx, 4, 0.1, 0.1, randcolor, "brick");
   numblocks++;
 }
@@ -570,7 +572,6 @@ int main(int argc, char **argv)
 {
   int width = 900;
   int height = 600;
-
   GLFWwindow *window = initGLFW(width, height);
 
   initGL(window, width, height);
@@ -594,14 +595,12 @@ int main(int argc, char **argv)
     // Control based on time (Time based transformation like 5 degrees
     // rotation every 0.5s)
     current_time = glfwGetTime(); // Time in seconds
-    if ((current_time - last_update_time) >=
-        1) { // atleast 0.5s elapsed since last frame
+    if ((current_time - last_update_time) >= 1) { // atleast 0.5s elapsed since last frame
       // do something every 0.5 seconds ..
       blockFall();
       last_update_time = current_time;
     }
   }
-
   glfwTerminate();
   return 0;
 }
