@@ -44,6 +44,7 @@ typedef struct COLOR color;
 COLOR red = {0.882, 0.3333, 0.3333};
 COLOR green = {0.1255, 0.75, 0.333};
 COLOR black = {30 / 255.0, 30 / 255.0, 21 / 255.0};
+COLOR steel = {196 / 255.0, 231 / 255.0, 249 / 255.0};
 
 struct Sprite {
     string name;
@@ -554,8 +555,8 @@ void initGL (GLFWwindow* window, int width, int height)
 
   createRectangle("redbasket", -2, -3.5, 0.5, 0.5, red, "basket");
   createRectangle("greenbasket", 2, -3.5, 0.5, 0.5, green, "basket");
+  createRectangle("turretcanon", -4, 0, 1, 0.2, steel, "turret");
   createRectangle("turretbase", -4, 0, 0.5, 0.5, black, "turret");
-  createRectangle("turretcanon", -4, 0, 1, 0.2, black, "turret");
 
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -605,7 +606,7 @@ void blockFall()
 
   stringstream ss;
   ss << numblocks;
-  createRectangle(ss.str(), randx, 3.8, 0.1, 1, randcolor, "brick");
+  createRectangle(ss.str(), randx, 3.8, 0.1, 0.7, randcolor, "brick");
   numblocks++;
 }
 
