@@ -553,8 +553,8 @@ void initGL (GLFWwindow* window, int width, int height)
   // Create the models
   // GL3 accepts only Triangles. Quads are not supported
 
-  createRectangle("redbasket", -2, -3.5, 0.5, 0.5, red, "basket");
-  createRectangle("greenbasket", 2, -3.5, 0.5, 0.5, green, "basket");
+  createRectangle("redbasket", -2, -3.8, 0.5, 0.5, red, "basket");
+  createRectangle("greenbasket", 2, -3.8, 0.5, 0.5, green, "basket");
   createRectangle("turretcanon", -4, 0, 1, 0.2, steel, "turret");
   createRectangle("turretbase", -4, 0, 0.5, 0.5, black, "turret");
 
@@ -585,8 +585,8 @@ void blockFall()
     string current = it->first;
     moveelem(&bricks[current], 0, -0.3);
   }
-  float randx = ((double) rand() / (RAND_MAX)) * 7;
-  randx = randx - 3.5;
+  float randx = ((double) rand() / (RAND_MAX)) * 6;
+  randx = randx - 3;
 
   srand(time(NULL));
   int rc = rand() % 3;
