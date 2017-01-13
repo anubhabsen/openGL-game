@@ -172,8 +172,7 @@ static void error_callback(int error, const char* description)
 
 void quit(GLFWwindow *window)
 {
-    glfwDestroyWindow(window);
-    glfwTerminate();
+    exit(0);
 //    exit(EXIT_SUCCESS);
 }
 
