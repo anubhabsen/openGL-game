@@ -51,7 +51,7 @@ struct Sprite {
     int exists;
     COLOR color;
     float x, y;
-    float height, width;
+    float height, width, angle;
     float velx, vely;
     VAO* object;
 };
@@ -68,26 +68,40 @@ GLuint programID;
 int numblocks = 0;
 int score = 0;
 
+void rotateStuff(Sprite *gun, float dx, float dy, float angle)
+{
+  if(gun->y + dy > 3.5)
+  {
+    return;
+  }
+  if(gun->y + dy < -3.5)
+  {
+    return;
+  }
+  gun->y += dy;
+  gun->angle = angle;
+}
+
 void moveelem(Sprite *temp, float dx, float dy)
 {
-    if(temp->x + dx > 3.4)
-    {
-      return;
-    }
-    if(temp->x + dx < -3.4)
-    {
-      return;
-    }
-    if(temp->y > 3.5 && dy > 0)
-    {
-      return;
-    }
-    if(temp->y < -4.5 && dy < 0)
-    {
-      return;
-    }
-    temp->x += dx;
-    temp->y += dy;
+  if(temp->x + dx > 3.4)
+  {
+    return;
+  }
+  if(temp->x + dx < -3.4)
+  {
+    return;
+  }
+  if(temp->y > 3.5 && dy > 0)
+  {
+    return;
+  }
+  if(temp->y < -4.5 && dy < 0)
+  {
+    return;
+  }
+  temp->x += dx;
+  temp->y += dy;
 }
 
 /* Function to load Shaders - Use it as it is */
@@ -263,6 +277,14 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
             case GLFW_KEY_L:
                 moveelem(&collect_baskets["greenbasket"], 0.1, 0);
                 break;
+            case GLFW_KEY_UP:
+                rotateStuff(&turret["turretcanon"], 0, 0.3, 0);
+                rotateStuff(&turret["turretbase"], 0, 0.3, 0);
+                break;
+            case GLFW_KEY_DOWN:
+                rotateStuff(&turret["turretcanon"], 0, -0.3, 0);
+                rotateStuff(&turret["turretbase"], 0, -0.3, 0);
+            case GLFW_KEY_X:
             default:
                 break;
         }
@@ -370,6 +392,7 @@ void createRectangle (string name, float x, float y, float width, float height, 
   elem.y = y;
   elem.height = height;
   elem.width = width;
+  elem.angle = 0;
 
   if(type == "basket")
   {
@@ -484,7 +507,7 @@ void draw ()
     /* Render your scene */
     glm::mat4 ObjectTransform;
     glm::mat4 translateObject = glm::translate (glm::vec3(turret[current].x, turret[current].y, 0.0f)); // glTranslatef
-    glm::mat4 rotateTriangle = glm::rotate((float)((0)*M_PI/180.0f), glm::vec3(0,1,0));  // rotate about vector (1,0,0)
+    glm::mat4 rotateTriangle = glm::rotate((float)((turret[current].angle)*M_PI/180.0f), glm::vec3(0,1,0));  // rotate about vector (1,0,0)
 
     ObjectTransform=translateObject*rotateTriangle;
     Matrices.model *= ObjectTransform;
