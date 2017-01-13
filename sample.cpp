@@ -567,7 +567,7 @@ void blockFall()
 
   stringstream ss;
   ss << numblocks;
-  createRectangle(ss.str(), randx, 3.8, 0.1, 0.5, randcolor, "brick");
+  createRectangle(ss.str(), randx, 3.8, 0.1, 1, randcolor, "brick");
   numblocks++;
 }
 
