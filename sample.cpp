@@ -370,13 +370,17 @@ void createRectangle (string name, float x, float y, float width, float height, 
   elem.height = height;
   elem.width = width;
 
-  if(type=="basket")
+  if(type == "basket")
   {
     collect_baskets[name] = elem;
   }
-  else if(type=="brick")
+  else if(type == "brick")
   {
     bricks[name] = elem;
+  }
+  else if(type == "turret")
+  {
+    turret[name] = elem;
   }
 }
 
@@ -465,6 +469,32 @@ void draw ()
 
     //glPopMatrix ();
   }
+  for(map<string,Sprite>::iterator it=turret.begin(); it!=turret.end(); it++)
+  {
+    string current = it->first; //The name of the current object
+    if(turret[current].exists==0)
+    {
+        continue;
+    }
+    glm::mat4 MVP;  // MVP = Projection * View * Model
+
+    Matrices.model = glm::mat4(1.0f);
+
+    /* Render your scene */
+    glm::mat4 ObjectTransform;
+    glm::mat4 translateObject = glm::translate (glm::vec3(turret[current].x, turret[current].y, 0.0f)); // glTranslatef
+    glm::mat4 rotateTriangle = glm::rotate((float)((0)*M_PI/180.0f), glm::vec3(0,1,0));  // rotate about vector (1,0,0)
+
+    ObjectTransform=translateObject*rotateTriangle;
+    Matrices.model *= ObjectTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    draw3DObject(turret[current].object);
+
+    //glPopMatrix ();
+  }
 }
 
 /* Initialise glfw window, I/O callbacks and the renderer to use */
@@ -524,6 +554,8 @@ void initGL (GLFWwindow* window, int width, int height)
 
   createRectangle("redbasket", -2, -3.5, 0.5, 0.5, red, "basket");
   createRectangle("greenbasket", 2, -3.5, 0.5, 0.5, green, "basket");
+  createRectangle("turretbase", -4, 0, 0.5, 0.5, black, "turret");
+  createRectangle("turretcanon", -4, 0, 1, 0.2, black, "turret");
 
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -559,11 +591,17 @@ void blockFall()
   int rc = rand() % 3;
   COLOR randcolor;
   if (rc == 0)
+  {
     randcolor = red;
+  }
   else if (rc == 1)
+  {
     randcolor = green;
+  }
   else
+  {
     randcolor = black;
+  }
 
   stringstream ss;
   ss << numblocks;
