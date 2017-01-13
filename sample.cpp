@@ -415,52 +415,56 @@ void draw ()
   //draw baskets
   for(map<string,Sprite>::iterator it=collect_baskets.begin(); it!=collect_baskets.end(); it++)
   {
-        string current = it->first; //The name of the current object
-        if(collect_baskets[current].exists == 0)
-            continue;
-        glm::mat4 MVP;	// MVP = Projection * View * Model
-
-        Matrices.model = glm::mat4(1.0f);
-
-        /* Render your scene */
-        glm::mat4 ObjectTransform;
-        glm::mat4 translateObject = glm::translate (glm::vec3(collect_baskets[current].x, collect_baskets[current].y, 0.0f)); // glTranslatef
-        glm::mat4 rotateTriangle = glm::rotate((float)((0)*M_PI/180.0f), glm::vec3(0,1,0));  // rotate about vector (1,0,0)
-
-        ObjectTransform=translateObject*rotateTriangle;
-        Matrices.model *= ObjectTransform;
-        MVP = VP * Matrices.model; // MVP = p * V * M
-
-        glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
-
-        draw3DObject(collect_baskets[current].object);
-
-        //glPopMatrix ();
+    string current = it->first; //The name of the current object
+    if(collect_baskets[current].exists == 0)
+    {
+        continue;
     }
-    //draw bricks
-    for(map<string,Sprite>::iterator it=bricks.begin(); it!=bricks.end(); it++){
-        string current = it->first; //The name of the current object
-        if(bricks[current].exists==0)
-            continue;
-        glm::mat4 MVP;	// MVP = Projection * View * Model
+    glm::mat4 MVP;	// MVP = Projection * View * Model
 
-        Matrices.model = glm::mat4(1.0f);
+    Matrices.model = glm::mat4(1.0f);
 
-        /* Render your scene */
-        glm::mat4 ObjectTransform;
-        glm::mat4 translateObject = glm::translate (glm::vec3(bricks[current].x, bricks[current].y, 0.0f)); // glTranslatef
-        glm::mat4 rotateTriangle = glm::rotate((float)((0)*M_PI/180.0f), glm::vec3(0,1,0));  // rotate about vector (1,0,0)
+    /* Render your scene */
+    glm::mat4 ObjectTransform;
+    glm::mat4 translateObject = glm::translate (glm::vec3(collect_baskets[current].x, collect_baskets[current].y, 0.0f)); // glTranslatef
+    glm::mat4 rotateTriangle = glm::rotate((float)((0)*M_PI/180.0f), glm::vec3(0,1,0));  // rotate about vector (1,0,0)
 
-        ObjectTransform=translateObject*rotateTriangle;
-        Matrices.model *= ObjectTransform;
-        MVP = VP * Matrices.model; // MVP = p * V * M
+    ObjectTransform=translateObject*rotateTriangle;
+    Matrices.model *= ObjectTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
 
-        glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-        draw3DObject(bricks[current].object);
+    draw3DObject(collect_baskets[current].object);
 
-        //glPopMatrix ();
+    //glPopMatrix ();
+  }
+  for(map<string,Sprite>::iterator it=bricks.begin(); it!=bricks.end(); it++)
+  {
+    string current = it->first; //The name of the current object
+    if(bricks[current].exists==0)
+    {
+        continue;
     }
+    glm::mat4 MVP;	// MVP = Projection * View * Model
+
+    Matrices.model = glm::mat4(1.0f);
+
+    /* Render your scene */
+    glm::mat4 ObjectTransform;
+    glm::mat4 translateObject = glm::translate (glm::vec3(bricks[current].x, bricks[current].y, 0.0f)); // glTranslatef
+    glm::mat4 rotateTriangle = glm::rotate((float)((0)*M_PI/180.0f), glm::vec3(0,1,0));  // rotate about vector (1,0,0)
+
+    ObjectTransform=translateObject*rotateTriangle;
+    Matrices.model *= ObjectTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    draw3DObject(bricks[current].object);
+
+    //glPopMatrix ();
+  }
 }
 
 /* Initialise glfw window, I/O callbacks and the renderer to use */
@@ -518,8 +522,8 @@ void initGL (GLFWwindow* window, int width, int height)
   // Create the models
   // GL3 accepts only Triangles. Quads are not supported
 
-  createRectangle("redbasket", -2, -3.5, 1.3, 0.5, red, "basket");
-  createRectangle("greenbasket", 2, -3.5, 1.3, 0.5, green, "basket");
+  createRectangle("redbasket", -2, -3.5, 0.5, 0.5, red, "basket");
+  createRectangle("greenbasket", 2, -3.5, 0.5, 0.5, green, "basket");
 
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -546,11 +550,10 @@ void blockFall()
   for (map<string, Sprite>::iterator it = bricks.begin(); it != bricks.end(); it++)
   {
     string current = it->first;
-    moveelem(&bricks[current], 0, -0.1);
+    moveelem(&bricks[current], 0, -0.3);
   }
-  srand(time(NULL));
-  float randx = ((float)(rand() % 100) / 100) * 7;
-  randx -= 3.5;
+  float randx = ((double) rand() / (RAND_MAX)) * 7;
+  randx = randx - 3.5;
 
   srand(time(NULL));
   int rc = rand() % 3;
@@ -564,7 +567,7 @@ void blockFall()
 
   stringstream ss;
   ss << numblocks;
-  createRectangle(ss.str(), randx, 4, 0.1, 0.1, randcolor, "brick");
+  createRectangle(ss.str(), randx, 3.8, 0.1, 0.5, randcolor, "brick");
   numblocks++;
 }
 
