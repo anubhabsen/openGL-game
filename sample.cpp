@@ -687,6 +687,19 @@ void initGL (GLFWwindow* window, int width, int height)
   cout << "GLSL: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 }
 
+void laserTimer()
+{
+  for (map<string, Sprite>::iterator it = laser.begin(); it != laser.end(); it++)
+  {
+    string current = it->first;
+    moveLaser(&laser[current], 0.3 * cos (laser[current].angle * M_PI / 180), 0.3 * sin (laser[current].angle * M_PI / 180));
+    if(laser[current].x > 4 || laser[current].x < -4)
+    {
+      laser[current].exists = 0;
+    }
+  }
+}
+
 void blockFall()
 {
   for (map<string, Sprite>::iterator it = bricks.begin(); it != bricks.end(); it++)
@@ -698,15 +711,7 @@ void blockFall()
       bricks[current].exists = 0;
     }
   }
-  for (map<string, Sprite>::iterator it = laser.begin(); it != laser.end(); it++)
-  {
-    string current = it->first;
-    moveLaser(&laser[current], 0.3 * cos (laser[current].angle * M_PI / 180), 0.3 * sin (laser[current].angle * M_PI / 180));
-    if(laser[current].x > 4 || laser[current].x < -4)
-    {
-      laser[current].exists = 0;
-    }
-  }
+
   float randx = ((double) rand() / (RAND_MAX)) * 6;
   randx = randx - 3;
 
@@ -740,7 +745,7 @@ int main(int argc, char **argv)
 
   initGL(window, width, height);
 
-  double last_update_time = glfwGetTime(), current_time;
+  double last_update_time = glfwGetTime(), current_time, current_time1, last_update_time1 = glfwGetTime();
 
   /* Draw in loop */
   while (!glfwWindowShouldClose(window)) {
@@ -756,6 +761,12 @@ int main(int argc, char **argv)
     // Poll for Keyboard and mouse events
     glfwPollEvents();
 
+    current_time1 = glfwGetTime();
+    if((current_time1 - last_update_time1) >= 1 / 4)
+    {
+      laserTimer();
+      last_update_time1 = current_time1;
+    }
     // Control based on time (Time based transformation like 5 degrees
     // rotation every 0.5s)
     current_time = glfwGetTime(); // Time in seconds
