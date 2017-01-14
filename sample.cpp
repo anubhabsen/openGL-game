@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <sstream>
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <ctime>
@@ -127,7 +128,7 @@ void brickBasketHandler(Sprite *temp, float dx, float dy)
   if(temp->y > 3.5 && dy > 0)
   {
     return;
-  }
+ }
   if(temp->y < -4.5 && dy < 0)
   {
     return;
@@ -415,7 +416,7 @@ void fireTurret(Sprite *cannon)
 {
   stringstream ss;
   ss << laserfired;
-  createRectangle(ss.str(), cannon->x, cannon->y, 0.3, 0.1, black, "turret", cannon->angle);
+  createRectangle(ss.str(), cannon->x, cannon->y, 0.3, 0.1, black, "laser", cannon->angle);
   laserfired++;
 }
 
@@ -507,6 +508,7 @@ void draw ()
     }
     glm::mat4 MVP;	// MVP = Projection * View * Model
 
+
     Matrices.model = glm::mat4(1.0f);
 
     /* Render your scene */
@@ -562,6 +564,7 @@ void draw ()
     Matrices.model = glm::mat4(1.0f);
 
     /* Render your scene */
+
     glm::mat4 ObjectTransform;
     glm::mat4 translateObject = glm::translate (glm::vec3(turret[current].x, turret[current].y, 0.0f)); // glTranslatef
     glm::mat4 rotateTriangle = glm::rotate((float)((turret[current].angle)*M_PI/180.0f), glm::vec3(0,0,1));  // rotate about vector (1,0,0)
@@ -698,7 +701,7 @@ void blockFall()
   for (map<string, Sprite>::iterator it = laser.begin(); it != laser.end(); it++)
   {
     string current = it->first;
-    moveLaser(&laser[current], 0.3, 0.3);
+    moveLaser(&laser[current], 0.3 * cos (laser[current].angle * M_PI / 180), 0.3 * sin (laser[current].angle * M_PI / 180));
     if(laser[current].x > 4 || laser[current].x < -4)
     {
       laser[current].exists = 0;
