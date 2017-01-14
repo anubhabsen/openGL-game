@@ -65,6 +65,7 @@ map <string, Sprite> laser;
 map <string, Sprite> mirror;
 
 GLuint programID;
+int laserfired = 0;
 int numblocks = 0;
 int score = 0;
 
@@ -286,51 +287,6 @@ void draw3DObject (struct VAO* vao)
 
 /* Executed when a regular key is pressed/released/held-down */
 /* Prefered for Keyboard events */
-void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-    if (action == GLFW_RELEASE) {
-        switch (key) {
-            case GLFW_KEY_A:
-                brickBasketHandler(&collect_baskets["redbasket"], -0.1, 0);
-                break;
-            case GLFW_KEY_D:
-                brickBasketHandler(&collect_baskets["redbasket"], 0.1, 0);
-                break;
-            case GLFW_KEY_J:
-                brickBasketHandler(&collect_baskets["greenbasket"], -0.1, 0);
-                break;
-            case GLFW_KEY_L:
-                brickBasketHandler(&collect_baskets["greenbasket"], 0.1, 0);
-                break;
-            case GLFW_KEY_UP:
-                turretHandler(&turret["turretcanon"], 0, 0.3, 0);
-                turretHandler(&turret["turretbase"], 0, 0.3, 0);
-                break;
-            case GLFW_KEY_DOWN:
-                turretHandler(&turret["turretcanon"], 0, -0.3, 0);
-                turretHandler(&turret["turretbase"], 0, -0.3, 0);
-                break;
-            case GLFW_KEY_T:
-                turretHandler(&turret["turretcanon"], 0, 0, 10);
-                break;
-            case GLFW_KEY_G:
-                turretHandler(&turret["turretcanon"], 0, 0, -10);
-                break;
-            case GLFW_KEY_X:
-            default:
-                break;
-        }
-    }
-    else if (action == GLFW_PRESS) {
-        switch (key) {
-            case GLFW_KEY_ESCAPE:
-                quit(window);
-                break;
-            default:
-                break;
-        }
-    }
-}
 
 /* Executed for character input (like in text boxes) */
 void keyboardChar (GLFWwindow* window, unsigned int key)
@@ -390,7 +346,7 @@ void reshapeWindow (GLFWwindow* window, int width, int height)
 }
 
 // Creates the rectangle object used in this sample code
-void createRectangle (string name, float x, float y, float width, float height, COLOR colour, string type)
+void createRectangle (string name, float x, float y, float width, float height, COLOR colour, string type,float angle)
 {
   // create3DObject creates and returns a handle to a VAO that can be used later
   float w = width/2, h = height/2;
@@ -424,7 +380,7 @@ void createRectangle (string name, float x, float y, float width, float height, 
   elem.y = y;
   elem.height = height;
   elem.width = width;
-  elem.angle = 0;
+  elem.angle = angle;
 
   if(type == "basket")
   {
@@ -438,12 +394,75 @@ void createRectangle (string name, float x, float y, float width, float height, 
   {
     turret[name] = elem;
   }
+  else if(type == "laser")
+  {
+    laser[name] = elem;
+  }
 }
 
 float camera_rotation_angle = 90;
 
 /* Render the scene with openGL */
 /* Edit this function according to your assignment */
+
+void fireTurret(Sprite *cannon)
+{
+  stringstream ss;
+  ss << laserfired;
+  createRectangle(ss.str(), 0, 0, 0.3, 0.1, black, "turret", cannon->angle);
+  laserfired++;
+}
+
+void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (action == GLFW_RELEASE) {
+        switch (key) {
+            case GLFW_KEY_A:
+                brickBasketHandler(&collect_baskets["redbasket"], -0.1, 0);
+                break;
+            case GLFW_KEY_D:
+                brickBasketHandler(&collect_baskets["redbasket"], 0.1, 0);
+                break;
+            case GLFW_KEY_J:
+                brickBasketHandler(&collect_baskets["greenbasket"], -0.1, 0);
+                break;
+            case GLFW_KEY_L:
+                brickBasketHandler(&collect_baskets["greenbasket"], 0.1, 0);
+                break;
+            case GLFW_KEY_UP:
+                turretHandler(&turret["turretcanon"], 0, 0.3, 0);
+                turretHandler(&turret["turretbase"], 0, 0.3, 0);
+                break;
+            case GLFW_KEY_DOWN:
+                turretHandler(&turret["turretcanon"], 0, -0.3, 0);
+                turretHandler(&turret["turretbase"], 0, -0.3, 0);
+                break;
+            case GLFW_KEY_T:
+                turretHandler(&turret["turretcanon"], 0, 0, 10);
+                break;
+            case GLFW_KEY_G:
+                turretHandler(&turret["turretcanon"], 0, 0, -10);
+                break;
+            case GLFW_KEY_SPACE:
+                fireTurret(&turret["turretcanon"]);
+                break;
+            case GLFW_KEY_X:
+            default:
+                break;
+        }
+    }
+    else if (action == GLFW_PRESS) {
+        switch (key) {
+            case GLFW_KEY_ESCAPE:
+                quit(window);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+
 void draw ()
 {
   // clear the color and depth in the frame buffer
@@ -551,6 +570,32 @@ void draw ()
 
     //glPopMatrix ();
   }
+  for(map<string,Sprite>::iterator it=laser.begin(); it!=laser.end(); it++)
+  {
+    string current = it->first; //The name of the current object
+    if(laser[current].exists==0)
+    {
+        continue;
+    }
+    glm::mat4 MVP;  // MVP = Projection * View * Model
+
+    Matrices.model = glm::mat4(1.0f);
+
+    /* Render your scene */
+    glm::mat4 ObjectTransform;
+    glm::mat4 translateObject = glm::translate (glm::vec3(turret[current].x, turret[current].y, 0.0f)); // glTranslatef
+    glm::mat4 rotateTriangle = glm::rotate((float)((laser[current].angle)*M_PI/180.0f), glm::vec3(0,0,1));  // rotate about vector (1,0,0)
+
+    ObjectTransform=translateObject*rotateTriangle;
+    Matrices.model *= ObjectTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    draw3DObject(turret[current].object);
+
+    //glPopMatrix ();
+  }
 }
 
 /* Initialise glfw window, I/O callbacks and the renderer to use */
@@ -608,10 +653,10 @@ void initGL (GLFWwindow* window, int width, int height)
   // Create the models
   // GL3 accepts only Triangles. Quads are not supported
 
-  createRectangle("redbasket", -2, -3.8, 0.5, 0.5, red, "basket");
-  createRectangle("greenbasket", 2, -3.8, 0.5, 0.5, green, "basket");
-  createRectangle("turretcanon", -4, 0, 1, 0.2, steel, "turret");
-  createRectangle("turretbase", -4, 0, 0.5, 0.5, black, "turret");
+  createRectangle("redbasket", -2, -3.8, 0.5, 0.5, red, "basket", 0);
+  createRectangle("greenbasket", 2, -3.8, 0.5, 0.5, green, "basket", 0);
+  createRectangle("turretcanon", -4, 0, 1, 0.2, steel, "turret", 0);
+  createRectangle("turretbase", -4, 0, 0.5, 0.5, black, "turret", 0);
 
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -665,7 +710,7 @@ void blockFall()
 
   stringstream ss;
   ss << numblocks;
-  createRectangle(ss.str(), randx, 3.8, 0.1, 0.7, randcolor, "brick");
+  createRectangle(ss.str(), randx, 3.8, 0.1, 0.7, randcolor, "brick", 0);
   numblocks++;
 }
 
