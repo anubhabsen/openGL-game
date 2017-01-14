@@ -692,7 +692,7 @@ void laserTimer()
   for (map<string, Sprite>::iterator it = laser.begin(); it != laser.end(); it++)
   {
     string current = it->first;
-    moveLaser(&laser[current], 0.3 * cos (laser[current].angle * M_PI / 180), 0.3 * sin (laser[current].angle * M_PI / 180));
+    moveLaser(&laser[current], 0.1 * cos (laser[current].angle * M_PI / 180), 0.1 * sin (laser[current].angle * M_PI / 180));
     if(laser[current].x > 4 || laser[current].x < -4)
     {
       laser[current].exists = 0;
@@ -762,7 +762,7 @@ int main(int argc, char **argv)
     glfwPollEvents();
 
     current_time1 = glfwGetTime();
-    if((current_time1 - last_update_time1) >= 1 / 4)
+    if((current_time1 - last_update_time1) >= 1 / 12)
     {
       laserTimer();
       last_update_time1 = current_time1;
