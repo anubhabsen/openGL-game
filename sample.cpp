@@ -711,7 +711,10 @@ void blockFall()
       bricks[current].exists = 0;
     }
   }
+}
 
+void blockCreate()
+{
   float randx = ((double) rand() / (RAND_MAX)) * 6;
   randx = randx - 3;
 
@@ -745,8 +748,8 @@ int main(int argc, char **argv)
 
   initGL(window, width, height);
 
-  double last_update_time = glfwGetTime(), current_time, current_time1, last_update_time1 = glfwGetTime();
-
+  double last_update_time_brick_form = glfwGetTime(), current_time_brick_form, current_time_laser, last_update_time_laser = glfwGetTime();
+  double last_update_time_brick_fall = glfwGetTime(), current_time_brick_fall;
   /* Draw in loop */
   while (!glfwWindowShouldClose(window)) {
 
@@ -761,19 +764,28 @@ int main(int argc, char **argv)
     // Poll for Keyboard and mouse events
     glfwPollEvents();
 
-    current_time1 = glfwGetTime();
-    if((current_time1 - last_update_time1) >= 1 / 12)
+    current_time_laser = glfwGetTime();
+    if((current_time_laser - last_update_time_laser) >= 1 / 12)
     {
       laserTimer();
-      last_update_time1 = current_time1;
+      last_update_time_laser = current_time_laser;
     }
     // Control based on time (Time based transformation like 5 degrees
     // rotation every 0.5s)
-    current_time = glfwGetTime(); // Time in seconds
-    if ((current_time - last_update_time) >= 1) { // atleast 0.5s elapsed since last frame
+    current_time_brick_form = glfwGetTime(); // Time in seconds
+    if ((current_time_brick_form - last_update_time_brick_form) >= 3.9)
+    { // atleast 0.5s elapsed since last frame
+      // do something every 0.5 seconds ..
+      blockCreate();
+      last_update_time_brick_form = current_time_brick_form;
+    }
+
+    current_time_brick_fall = glfwGetTime(); // Time in seconds
+    if ((current_time_brick_fall - last_update_time_brick_fall) >= 0.7)
+    { // atleast 0.5s elapsed since last frame
       // do something every 0.5 seconds ..
       blockFall();
-      last_update_time = current_time;
+      last_update_time_brick_fall = current_time_brick_fall;
     }
   }
   glfwTerminate();
