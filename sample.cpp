@@ -108,6 +108,12 @@ void turretHandler(Sprite *gun, float dx, float dy, float angle)
   }
 }
 
+void moveLaser(Sprite *laser, float dx, float dy)
+{
+  laser->x += dx;
+  laser->y += dy;
+}
+
 void brickBasketHandler(Sprite *temp, float dx, float dy)
 {
   if(temp->x + dx > 3.4)
@@ -583,7 +589,7 @@ void draw ()
 
     /* Render your scene */
     glm::mat4 ObjectTransform;
-    glm::mat4 translateObject = glm::translate (glm::vec3(turret[current].x, turret[current].y, 0.0f)); // glTranslatef
+    glm::mat4 translateObject = glm::translate (glm::vec3(laser[current].x, laser[current].y, 0.0f)); // glTranslatef
     glm::mat4 rotateTriangle = glm::rotate((float)((laser[current].angle)*M_PI/180.0f), glm::vec3(0,0,1));  // rotate about vector (1,0,0)
 
     ObjectTransform=translateObject*rotateTriangle;
@@ -592,7 +598,7 @@ void draw ()
 
     glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
-    draw3DObject(turret[current].object);
+    draw3DObject(laser[current].object);
 
     //glPopMatrix ();
   }
@@ -687,6 +693,15 @@ void blockFall()
     if(bricks[current].y < -4.5)
     {
       bricks[current].exists = 0;
+    }
+  }
+  for (map<string, Sprite>::iterator it = laser.begin(); it != laser.end(); it++)
+  {
+    string current = it->first;
+    moveLaser(&laser[current], 0.3, 0.3);
+    if(laser[current].x > 4 || laser[current].x < -4)
+    {
+      laser[current].exists = 0;
     }
   }
   float randx = ((double) rand() / (RAND_MAX)) * 6;
