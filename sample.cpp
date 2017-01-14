@@ -709,20 +709,23 @@ void blockFall()
     for (map<string, Sprite>::iterator it1 = collect_baskets.begin(); it1 != collect_baskets.end(); it1++)
     {
       string current_basket = it1->first;
-      if(bricks[current].y <= -3.7 && bricks[current].exists == 1 && bricks[current].x <= collect_baskets[current_basket].x + 1 && bricks[current].x >= collect_baskets[current_basket].x - 1)
+      if(bricks[current].y <= -3.7 && bricks[current].exists == 1 && bricks[current].x <= collect_baskets[current_basket].x + 0.5 && bricks[current].x >= collect_baskets[current_basket].x - 0.5)
       {
-        score += 10;
-        bricks[current].exists = 0;
-        cout<<score<<endl;
+        if(bricks[current].color.r == collect_baskets[current_basket].color.r && bricks[current].color.g == collect_baskets[current_basket].color.g && bricks[current].color.b == collect_baskets[current_basket].color.b)
+        {
+          score += 10;
+          bricks[current].exists = 0;
+        }
+        else
+        {
+          score -=  2;
+          bricks[current].exists = 0;
+        }
       }
-      // else if(bricks[current].color != collect_baskets[current_basket].color && bricks[current].y <= -3.8 && (bricks[current].x >= collect_baskets[current].x - 0.5 && bricks[current].x <= collect_baskets[current].x + 0.5))
-      // {
-      //   score -= 5;
-      //   bricks[current].exists = 0;
-      // }
     }
-    if(bricks[current].y < -3.9)
+    if(bricks[current].y < -5)
     {
+      score -= 1;
       bricks[current].exists = 0;
     }
   }
