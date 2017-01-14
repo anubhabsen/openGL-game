@@ -409,7 +409,7 @@ void fireTurret(Sprite *cannon)
 {
   stringstream ss;
   ss << laserfired;
-  createRectangle(ss.str(), 0, 0, 0.3, 0.1, black, "turret", cannon->angle);
+  createRectangle(ss.str(), cannon->x, cannon->y, 0.3, 0.1, black, "turret", cannon->angle);
   laserfired++;
 }
 
