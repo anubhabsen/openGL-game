@@ -68,7 +68,7 @@ GLuint programID;
 int numblocks = 0;
 int score = 0;
 
-void rotateStuff(Sprite *gun, float dx, float dy, float angle)
+void turretHandler(Sprite *gun, float dx, float dy, float angle)
 {
   if(gun->y + dy > 3.5)
   {
@@ -107,7 +107,7 @@ void rotateStuff(Sprite *gun, float dx, float dy, float angle)
   }
 }
 
-void moveelem(Sprite *temp, float dx, float dy)
+void brickBasketHandler(Sprite *temp, float dx, float dy)
 {
   if(temp->x + dx > 3.4)
   {
@@ -291,30 +291,30 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
     if (action == GLFW_RELEASE) {
         switch (key) {
             case GLFW_KEY_A:
-                moveelem(&collect_baskets["redbasket"], -0.1, 0);
+                brickBasketHandler(&collect_baskets["redbasket"], -0.1, 0);
                 break;
             case GLFW_KEY_D:
-                moveelem(&collect_baskets["redbasket"], 0.1, 0);
+                brickBasketHandler(&collect_baskets["redbasket"], 0.1, 0);
                 break;
             case GLFW_KEY_J:
-                moveelem(&collect_baskets["greenbasket"], -0.1, 0);
+                brickBasketHandler(&collect_baskets["greenbasket"], -0.1, 0);
                 break;
             case GLFW_KEY_L:
-                moveelem(&collect_baskets["greenbasket"], 0.1, 0);
+                brickBasketHandler(&collect_baskets["greenbasket"], 0.1, 0);
                 break;
             case GLFW_KEY_UP:
-                rotateStuff(&turret["turretcanon"], 0, 0.3, 0);
-                rotateStuff(&turret["turretbase"], 0, 0.3, 0);
+                turretHandler(&turret["turretcanon"], 0, 0.3, 0);
+                turretHandler(&turret["turretbase"], 0, 0.3, 0);
                 break;
             case GLFW_KEY_DOWN:
-                rotateStuff(&turret["turretcanon"], 0, -0.3, 0);
-                rotateStuff(&turret["turretbase"], 0, -0.3, 0);
+                turretHandler(&turret["turretcanon"], 0, -0.3, 0);
+                turretHandler(&turret["turretbase"], 0, -0.3, 0);
                 break;
             case GLFW_KEY_T:
-                rotateStuff(&turret["turretcanon"], 0, 0, 10);
+                turretHandler(&turret["turretcanon"], 0, 0, 10);
                 break;
             case GLFW_KEY_G:
-                rotateStuff(&turret["turretcanon"], 0, 0, -10);
+                turretHandler(&turret["turretcanon"], 0, 0, -10);
                 break;
             case GLFW_KEY_X:
             default:
@@ -638,7 +638,7 @@ void blockFall()
   for (map<string, Sprite>::iterator it = bricks.begin(); it != bricks.end(); it++)
   {
     string current = it->first;
-    moveelem(&bricks[current], 0, -0.3);
+    brickBasketHandler(&bricks[current], 0, -0.3);
   }
   float randx = ((double) rand() / (RAND_MAX)) * 6;
   randx = randx - 3;
