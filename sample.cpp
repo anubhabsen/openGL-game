@@ -687,12 +687,34 @@ void initGL (GLFWwindow* window, int width, int height)
   cout << "GLSL: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << endl;
 }
 
+float dist(float x1, float y1, float x2, float y2)
+{
+  return sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+}
+
 void laserTimer()
 {
   for (map<string, Sprite>::iterator it = laser.begin(); it != laser.end(); it++)
   {
     string current = it->first;
     moveLaser(&laser[current], 0.1 * cos (laser[current].angle * M_PI / 180), 0.1 * sin (laser[current].angle * M_PI / 180));
+    for (map<string, Sprite>::iterator it1 = bricks.begin(); it1 != bricks.end(); it1++)
+    {
+      string current_brick = it1->first;
+      if(dist(laser[current].x, laser[current].y, bricks[current_brick].x, bricks[current_brick].y) <= sqrt(14.5 - 10.5 * sin(laser[current].angle)) / 10 && laser[current].exists == 1 && bricks[current_brick].exists == 1)
+      {
+        if(bricks[current_brick].color.r == 30 / 255 && bricks[current_brick].color.g == 30 / 255 && bricks[current_brick].color.b == 21 / 255)
+        {
+          score += 10;
+        }
+        else
+        {
+          score -= 5;
+        }
+        bricks[current_brick].exists = 0;
+        laser[current].exists = 0;
+      }
+    }
     if(laser[current].x > 4 || laser[current].x < -4)
     {
       laser[current].exists = 0;
