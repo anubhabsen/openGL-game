@@ -639,6 +639,10 @@ void blockFall()
   {
     string current = it->first;
     brickBasketHandler(&bricks[current], 0, -0.3);
+    if(bricks[current].y < -4.5)
+    {
+      bricks[current].exists = 0;
+    }
   }
   float randx = ((double) rand() / (RAND_MAX)) * 6;
   randx = randx - 3;
