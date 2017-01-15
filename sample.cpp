@@ -405,6 +405,10 @@ void createRectangle (string name, float x, float y, float width, float height, 
   {
     laser[name] = elem;
   }
+  else if(type == "mirror")
+  {
+    mirror[name] = elem;
+  }
 }
 
 float camera_rotation_angle = 90;
@@ -605,6 +609,32 @@ void draw ()
 
     //glPopMatrix ();
   }
+  for(map<string,Sprite>::iterator it=mirror.begin(); it!=mirror.end(); it++)
+  {
+    string current = it->first; //The name of the current object
+    if(mirror[current].exists==0)
+    {
+        continue;
+    }
+    glm::mat4 MVP;  // MVP = Projection * View * Model
+
+    Matrices.model = glm::mat4(1.0f);
+
+    /* Render your scene */
+    glm::mat4 ObjectTransform;
+    glm::mat4 translateObject = glm::translate (glm::vec3(mirror[current].x, mirror[current].y, 0.0f)); // glTranslatef
+    glm::mat4 rotateTriangle = glm::rotate((float)((mirror[current].angle)*M_PI/180.0f), glm::vec3(0,0,1));  // rotate about vector (1,0,0)
+
+    ObjectTransform=translateObject*rotateTriangle;
+    Matrices.model *= ObjectTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    draw3DObject(mirror[current].object);
+
+    //glPopMatrix ();
+  }
 }
 
 /* Initialise glfw window, I/O callbacks and the renderer to use */
@@ -666,6 +696,10 @@ void initGL (GLFWwindow* window, int width, int height)
   createRectangle("greenbasket", 2, -3.8, 0.5, 0.5, green, "basket", 0);
   createRectangle("turretcanon", -4, 0, 1, 0.2, steel, "turret", 0);
   createRectangle("turretbase", -4, 0, 0.5, 0.5, black, "turret", 0);
+  createRectangle("mirror1", 3, 3, 0.05, 0.8, steel, "mirror", 45);
+  createRectangle("mirror2", 3, -2.5, 0.05, 0.8, steel, "mirror", -45);
+  createRectangle("mirror3", 1, 1.5, 0.05, 0.8, steel, "mirror", 30);
+  createRectangle("mirror4", 1, -1.5, 0.05, 0.8, steel, "mirror", -30);
 
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
@@ -715,7 +749,15 @@ void laserTimer()
         laser[current].exists = 0;
       }
     }
-    if(laser[current].x > 4 || laser[current].x < -4)
+    for(map<string, Sprite>::iterator it1 = mirror.begin(); it1 != mirror.end(); it1++)
+    {
+      string current_mirror = it1->first;
+      if(dist(laser[current].x, laser[current].y, mirror[current_mirror].x, mirror[current_mirror].y) <= 0.5)
+      {
+        laser[current].exists = 0;
+      }
+    }
+    if(laser[current].x > 4 || laser[current].x < -4 || laser[current].y > 4 || laser[current].y < -4)
     {
       laser[current].exists = 0;
     }
