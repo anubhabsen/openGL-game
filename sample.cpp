@@ -478,6 +478,55 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
                 break;
         }
     }
+    else if (action == GLFW_REPEAT) {
+        switch(key) {
+          case GLFW_KEY_A:
+              brickBasketHandler(&collect_baskets["redbasket"], -0.1, 0);
+              break;
+          case GLFW_KEY_D:
+              brickBasketHandler(&collect_baskets["redbasket"], 0.1, 0);
+              break;
+          case GLFW_KEY_J:
+              brickBasketHandler(&collect_baskets["greenbasket"], -0.1, 0);
+              break;
+          case GLFW_KEY_L:
+              brickBasketHandler(&collect_baskets["greenbasket"], 0.1, 0);
+              break;
+          case GLFW_KEY_UP:
+              turretHandler(&turret["turretcanon"], 0, 0.3, 0);
+              turretHandler(&turret["turretbase"], 0, 0.3, 0);
+              break;
+          case GLFW_KEY_DOWN:
+              turretHandler(&turret["turretcanon"], 0, -0.3, 0);
+              turretHandler(&turret["turretbase"], 0, -0.3, 0);
+              break;
+          case GLFW_KEY_T:
+              turretHandler(&turret["turretcanon"], 0, 0, 10);
+              break;
+          case GLFW_KEY_G:
+              turretHandler(&turret["turretcanon"], 0, 0, -10);
+              break;
+          case GLFW_KEY_SPACE:
+              fireTurret(&turret["turretcanon"]);
+              break;
+          case GLFW_KEY_M:
+              if(brickfalltimer <= 2)
+              {
+                brickfalltimer += 0.1;
+                brickformtimer += 0.1;
+              }
+              break;
+          case GLFW_KEY_N:
+              if(brickfalltimer >= 0.1)
+              {
+                brickfalltimer -= 0.1;
+                brickformtimer -= 0.5;
+              }
+              break;
+          default:
+              break;
+        }
+    }
     else if (action == GLFW_PRESS) {
         switch (key) {
             case GLFW_KEY_ESCAPE:
