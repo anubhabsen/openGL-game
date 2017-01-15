@@ -290,71 +290,6 @@ void draw3DObject (struct VAO* vao)
     glDrawArrays(vao->PrimitiveMode, 0, vao->NumVertices); // Starting from vertex 0; 3 vertices total -> 1 triangle
 }
 
-/**************************
- * Customizable functions *
- **************************/
-
-/* Executed when a regular key is pressed/released/held-down */
-/* Prefered for Keyboard events */
-
-/* Executed for character input (like in text boxes) */
-void keyboardChar (GLFWwindow* window, unsigned int key)
-{
-	switch (key) {
-		case 'Q':
-            quit(window);
-            break;
-		case 'q':
-            quit(window);
-            break;
-		default:
-			break;
-	}
-}
-
-/* Executed when a mouse button is pressed/released */
-void mouseButton (GLFWwindow* window, int button, int action, int mods)
-{
-    switch (button) {
-        case GLFW_MOUSE_BUTTON_LEFT:
-            if (action == GLFW_RELEASE)
-            break;
-        case GLFW_MOUSE_BUTTON_RIGHT:
-            if (action == GLFW_RELEASE) {
-            }
-            break;
-        default:
-            break;
-    }
-}
-
-/* Executed when window is resized to 'width' and 'height' */
-/* Modify the bounds of the screen here in glm::ortho or Field of View in glm::Perspective */
-void reshapeWindow (GLFWwindow* window, int width, int height)
-{
-    int fbwidth=width, fbheight=height;
-    /* With Retina display on Mac OS X, GLFW's FramebufferSize
-     is different from WindowSize */
-    glfwGetFramebufferSize(window, &fbwidth, &fbheight);
-
-	GLfloat fov = 90.0f;
-
-	// sets the viewport of openGL renderer
-	glViewport (0, 0, (GLsizei) fbwidth, (GLsizei) fbheight);
-
-	// set the projection matrix as perspective
-	/* glMatrixMode (GL_PROJECTION);
-	   glLoadIdentity ();
-	   gluPerspective (fov, (GLfloat) fbwidth / (GLfloat) fbheight, 0.1, 500.0); */
-	// Store the projection matrix in a variable for future use
-    // Perspective projection for 3D views
-    // Matrices.projection = glm::perspective (fov, (GLfloat) fbwidth / (GLfloat) fbheight, 0.1f, 500.0f);
-
-    // Ortho projection for 2D views
-    Matrices.projection = glm::ortho(-4.0f, 4.0f, -4.0f, 4.0f, 0.1f, 500.0f);
-}
-
-// Creates the rectangle object used in this sample code
 void createRectangle (string name, float x, float y, float width, float height, COLOR colour, string type,float angle)
 {
   // create3DObject creates and returns a handle to a VAO that can be used later
@@ -413,11 +348,6 @@ void createRectangle (string name, float x, float y, float width, float height, 
   }
 }
 
-float camera_rotation_angle = 90;
-
-/* Render the scene with openGL */
-/* Edit this function according to your assignment */
-
 void fireTurret(Sprite *cannon)
 {
   stringstream ss;
@@ -426,21 +356,93 @@ void fireTurret(Sprite *cannon)
   laserfired++;
 }
 
+/**************************
+ * Customizable functions *
+ **************************/
+
+/* Executed when a regular key is pressed/released/held-down */
+/* Prefered for Keyboard events */
+
+/* Executed for character input (like in text boxes) */
+void keyboardChar (GLFWwindow* window, unsigned int key)
+{
+	switch (key) {
+		case 'Q':
+            quit(window);
+            break;
+		case 'q':
+            quit(window);
+            break;
+		default:
+			break;
+	}
+}
+
+/* Executed when a mouse button is pressed/released */
+void mouseButton (GLFWwindow* window, int button, int action, int mods)
+{
+    switch (button) {
+        case GLFW_MOUSE_BUTTON_LEFT:
+            fireTurret(&turret["turretcanon"]);
+            break;
+        case GLFW_MOUSE_BUTTON_RIGHT:
+            if (action == GLFW_RELEASE) {
+            }
+            break;
+        default:
+            break;
+    }
+}
+
+/* Executed when window is resized to 'width' and 'height' */
+/* Modify the bounds of the screen here in glm::ortho or Field of View in glm::Perspective */
+void reshapeWindow (GLFWwindow* window, int width, int height)
+{
+    int fbwidth=width, fbheight=height;
+    /* With Retina display on Mac OS X, GLFW's FramebufferSize
+     is different from WindowSize */
+    glfwGetFramebufferSize(window, &fbwidth, &fbheight);
+
+	GLfloat fov = 90.0f;
+
+	// sets the viewport of openGL renderer
+	glViewport (0, 0, (GLsizei) fbwidth, (GLsizei) fbheight);
+
+	// set the projection matrix as perspective
+	/* glMatrixMode (GL_PROJECTION);
+	   glLoadIdentity ();
+	   gluPerspective (fov, (GLfloat) fbwidth / (GLfloat) fbheight, 0.1, 500.0); */
+	// Store the projection matrix in a variable for future use
+    // Perspective projection for 3D views
+    // Matrices.projection = glm::perspective (fov, (GLfloat) fbwidth / (GLfloat) fbheight, 0.1f, 500.0f);
+
+    // Ortho projection for 2D views
+    Matrices.projection = glm::ortho(-4.0f, 4.0f, -4.0f, 4.0f, 0.1f, 500.0f);
+}
+
+// Creates the rectangle object used in this sample code
+
+float camera_rotation_angle = 90;
+
+/* Render the scene with openGL */
+/* Edit this function according to your assignment */
+
 void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (action == GLFW_RELEASE) {
         switch (key) {
-            case GLFW_KEY_A:
-                brickBasketHandler(&collect_baskets["redbasket"], -0.1, 0);
+          //glfwGetKey(window, GLFW_KEY_LEFT_ALT)
+            case GLFW_KEY_LEFT:
+                if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
+                  brickBasketHandler(&collect_baskets["redbasket"], -0.1, 0);
+                if(glfwGetKey(window, GLFW_KEY_LEFT_ALT))
+                  brickBasketHandler(&collect_baskets["greenbasket"], -0.1, 0);
                 break;
-            case GLFW_KEY_D:
-                brickBasketHandler(&collect_baskets["redbasket"], 0.1, 0);
-                break;
-            case GLFW_KEY_J:
-                brickBasketHandler(&collect_baskets["greenbasket"], -0.1, 0);
-                break;
-            case GLFW_KEY_L:
-                brickBasketHandler(&collect_baskets["greenbasket"], 0.1, 0);
+            case GLFW_KEY_RIGHT:
+                if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
+                  brickBasketHandler(&collect_baskets["redbasket"], 0.1, 0);
+                if(glfwGetKey(window, GLFW_KEY_LEFT_ALT))
+                  brickBasketHandler(&collect_baskets["greenbasket"], 0.1, 0);
                 break;
             case GLFW_KEY_UP:
                 turretHandler(&turret["turretcanon"], 0, 0.3, 0);
@@ -539,7 +541,7 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
 }
 
 
-void draw ()
+void draw (GLFWwindow *window, int width, int height)
 {
   // clear the color and depth in the frame buffer
   glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -565,7 +567,7 @@ void draw ()
   // Compute ViewProject matrix as view/camera might not be changed for this frame (basic scenario)
   //  Don't change unless you are sure!!
   glm::mat4 VP = Matrices.projection * Matrices.view;
-
+  double x, y;
   /* Render your scene */
   //draw baskets
   for(map<string,Sprite>::iterator it=collect_baskets.begin(); it!=collect_baskets.end(); it++)
@@ -648,6 +650,17 @@ void draw ()
 
     //glPopMatrix ();
   }
+
+  glfwGetWindowSize(window, &width, &height);
+  glfwGetCursorPos(window, &x, &y);
+  float xcoord = x / width * 8 - 4 - turret["turretcanon"].x;
+  float ycoord = - y / height * 8 + 4 - turret["turretcanon"].y;
+  float angle = 1 * atan(ycoord / xcoord) * 180 / M_PI;
+  if(angle <= 50 && angle >= -50)
+  {
+    turret["turretcanon"].angle = angle;
+  }
+
   for(map<string,Sprite>::iterator it=laser.begin(); it!=laser.end(); it++)
   {
     string current = it->first; //The name of the current object
@@ -902,7 +915,7 @@ int main(int argc, char **argv)
 
     // OpenGL Draw commands
 
-    draw();
+    draw(window, width, height);
     // draw3DObject draws the VAO given to it using current MVP matrix
 
     // Swap Frame Buffer in double buffering
