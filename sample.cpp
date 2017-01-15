@@ -752,7 +752,7 @@ void laserTimer()
     for(map<string, Sprite>::iterator it1 = mirror.begin(); it1 != mirror.end(); it1++)
     {
       string current_mirror = it1->first;
-      if(dist(laser[current].x, laser[current].y, mirror[current_mirror].x, mirror[current_mirror].y) <= 0.5)
+      if(dist(laser[current].x, laser[current].y, mirror[current_mirror].x, mirror[current_mirror].y) <= sqrt(18.25 + 12 * cos((laser[current].angle + mirror[current_mirror].angle) * M_PI / 180)) / 10 && dist(laser[current].x, laser[current].y, mirror[current_mirror].x, mirror[current_mirror].y) >= sqrt(18.25 - 12 * cos((laser[current].angle + mirror[current_mirror].angle) * M_PI / 180)) / 10)
       {
         laser[current].exists = 0;
       }
