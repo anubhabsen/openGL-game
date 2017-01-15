@@ -69,6 +69,8 @@ GLuint programID;
 int laserfired = 0;
 int numblocks = 0;
 int score = 0;
+float brickfalltimer = 0.7;
+float brickformtimer = 3.9;
 
 void turretHandler(Sprite *gun, float dx, float dy, float angle)
 {
@@ -456,6 +458,20 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
                 break;
             case GLFW_KEY_SPACE:
                 fireTurret(&turret["turretcanon"]);
+                break;
+            case GLFW_KEY_M:
+                if(brickfalltimer <= 2)
+                {
+                  brickfalltimer += 0.1;
+                  brickformtimer += 0.1;
+                }
+                break;
+            case GLFW_KEY_N:
+                if(brickfalltimer >= 0.1)
+                {
+                  brickfalltimer -= 0.1;
+                  brickformtimer -= 0.5;
+                }
                 break;
             case GLFW_KEY_X:
             default:
@@ -855,7 +871,7 @@ int main(int argc, char **argv)
     // Control based on time (Time based transformation like 5 degrees
     // rotation every 0.5s)
     current_time_brick_form = glfwGetTime(); // Time in seconds
-    if ((current_time_brick_form - last_update_time_brick_form) >= 3.9)
+    if ((current_time_brick_form - last_update_time_brick_form) >= brickformtimer)
     { // atleast 0.5s elapsed since last frame
       // do something every 0.5 seconds ..
       blockCreate();
@@ -863,7 +879,7 @@ int main(int argc, char **argv)
     }
 
     current_time_brick_fall = glfwGetTime(); // Time in seconds
-    if ((current_time_brick_fall - last_update_time_brick_fall) >= 0.7)
+    if ((current_time_brick_fall - last_update_time_brick_fall) >= brickfalltimer)
     { // atleast 0.5s elapsed since last frame
       // do something every 0.5 seconds ..
       blockFall();
