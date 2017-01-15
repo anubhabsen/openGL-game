@@ -754,7 +754,7 @@ void laserTimer()
       string current_mirror = it1->first;
       if(dist(laser[current].x, laser[current].y, mirror[current_mirror].x, mirror[current_mirror].y) <= sqrt(18.25 + 12 * cos((laser[current].angle + mirror[current_mirror].angle) * M_PI / 180)) / 10 && dist(laser[current].x, laser[current].y, mirror[current_mirror].x, mirror[current_mirror].y) >= sqrt(18.25 - 12 * cos((laser[current].angle + mirror[current_mirror].angle) * M_PI / 180)) / 10)
       {
-        laser[current].exists = 0;
+        laser[current].angle += 2 * (mirror[current_mirror].angle - laser[current].angle) + 180;
       }
     }
     if(laser[current].x > 4 || laser[current].x < -4 || laser[current].y > 4 || laser[current].y < -4)
