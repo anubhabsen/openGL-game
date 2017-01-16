@@ -71,6 +71,9 @@ int numblocks = 0;
 int score = 0;
 float brickfalltimer = 0.7;
 float brickformtimer = 3.9;
+float screen_zoom = 1;
+float screen_center_y = 0;
+float screen_center_x = 0;
 
 void turretHandler(Sprite *gun, float dx, float dy, float angle)
 {
@@ -435,20 +438,46 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
             case GLFW_KEY_LEFT:
                 if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
                   brickBasketHandler(&collect_baskets["redbasket"], -0.1, 0);
-                if(glfwGetKey(window, GLFW_KEY_LEFT_ALT))
+                else if(glfwGetKey(window, GLFW_KEY_LEFT_ALT))
                   brickBasketHandler(&collect_baskets["greenbasket"], -0.1, 0);
+                else
+                {
+                  if(screen_zoom > 1)
+                  {
+                    screen_center_x -= 0.1;
+                  }
+                }
                 break;
             case GLFW_KEY_RIGHT:
                 if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
                   brickBasketHandler(&collect_baskets["redbasket"], 0.1, 0);
-                if(glfwGetKey(window, GLFW_KEY_LEFT_ALT))
+                else if(glfwGetKey(window, GLFW_KEY_LEFT_ALT))
                   brickBasketHandler(&collect_baskets["greenbasket"], 0.1, 0);
+                else
+                {
+                  if(screen_zoom > 1)
+                  {
+                    screen_center_x += 0.1;
+                  }
+                }
                 break;
             case GLFW_KEY_UP:
+                if(screen_zoom > 1)
+                {
+                  screen_center_y += 0.1;
+                }
+                break;
+            case GLFW_KEY_DOWN:
+                if(screen_zoom > 1)
+                {
+                  screen_center_y -= 0.1;
+                }
+                break;
+            case GLFW_KEY_S:
                 turretHandler(&turret["turretcanon"], 0, 0.3, 0);
                 turretHandler(&turret["turretbase"], 0, 0.3, 0);
                 break;
-            case GLFW_KEY_DOWN:
+            case GLFW_KEY_F:
                 turretHandler(&turret["turretcanon"], 0, -0.3, 0);
                 turretHandler(&turret["turretbase"], 0, -0.3, 0);
                 break;
@@ -475,58 +504,109 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
                   brickformtimer -= 0.5;
                 }
                 break;
-            case GLFW_KEY_X:
+            case GLFW_KEY_EQUAL:
+                if(screen_zoom <= 5)
+                {
+                  screen_zoom += 1;
+                }
+                break;
+            case GLFW_KEY_MINUS:
+                if(screen_zoom >= 2)
+                {
+                  screen_zoom -= 1;
+                  screen_center_x = 0;
+                  screen_center_y = 0;
+                }
             default:
                 break;
         }
     }
     else if (action == GLFW_REPEAT) {
         switch(key) {
-          case GLFW_KEY_A:
-              brickBasketHandler(&collect_baskets["redbasket"], -0.1, 0);
-              break;
-          case GLFW_KEY_D:
-              brickBasketHandler(&collect_baskets["redbasket"], 0.1, 0);
-              break;
-          case GLFW_KEY_J:
-              brickBasketHandler(&collect_baskets["greenbasket"], -0.1, 0);
-              break;
-          case GLFW_KEY_L:
-              brickBasketHandler(&collect_baskets["greenbasket"], 0.1, 0);
-              break;
-          case GLFW_KEY_UP:
-              turretHandler(&turret["turretcanon"], 0, 0.3, 0);
-              turretHandler(&turret["turretbase"], 0, 0.3, 0);
-              break;
-          case GLFW_KEY_DOWN:
-              turretHandler(&turret["turretcanon"], 0, -0.3, 0);
-              turretHandler(&turret["turretbase"], 0, -0.3, 0);
-              break;
-          case GLFW_KEY_T:
-              turretHandler(&turret["turretcanon"], 0, 0, 10);
-              break;
-          case GLFW_KEY_G:
-              turretHandler(&turret["turretcanon"], 0, 0, -10);
-              break;
-          case GLFW_KEY_SPACE:
-              fireTurret(&turret["turretcanon"]);
-              break;
-          case GLFW_KEY_M:
-              if(brickfalltimer <= 2)
-              {
-                brickfalltimer += 0.1;
-                brickformtimer += 0.1;
-              }
-              break;
-          case GLFW_KEY_N:
-              if(brickfalltimer >= 0.1)
-              {
-                brickfalltimer -= 0.1;
-                brickformtimer -= 0.5;
-              }
-              break;
-          default:
-              break;
+          case GLFW_KEY_LEFT:
+                if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
+                  brickBasketHandler(&collect_baskets["redbasket"], -0.1, 0);
+                else if(glfwGetKey(window, GLFW_KEY_LEFT_ALT))
+                  brickBasketHandler(&collect_baskets["greenbasket"], -0.1, 0);
+                else
+                {
+                  if(screen_zoom > 1)
+                  {
+                    screen_center_x -= 0.1;
+                  }
+                }
+                break;
+            case GLFW_KEY_RIGHT:
+                if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL))
+                  brickBasketHandler(&collect_baskets["redbasket"], 0.1, 0);
+                else if(glfwGetKey(window, GLFW_KEY_LEFT_ALT))
+                  brickBasketHandler(&collect_baskets["greenbasket"], 0.1, 0);
+                else
+                {
+                  if(screen_zoom > 1)
+                  {
+                    screen_center_x += 0.1;
+                  }
+                }
+                break;
+            case GLFW_KEY_UP:
+                if(screen_zoom > 1)
+                {
+                  screen_center_y += 0.1;
+                }
+                break;
+            case GLFW_KEY_DOWN:
+                if(screen_zoom > 1)
+                {
+                  screen_center_y -= 0.1;
+                }
+                break;
+            case GLFW_KEY_S:
+                turretHandler(&turret["turretcanon"], 0, 0.3, 0);
+                turretHandler(&turret["turretbase"], 0, 0.3, 0);
+                break;
+            case GLFW_KEY_F:
+                turretHandler(&turret["turretcanon"], 0, -0.3, 0);
+                turretHandler(&turret["turretbase"], 0, -0.3, 0);
+                break;
+            case GLFW_KEY_T:
+                turretHandler(&turret["turretcanon"], 0, 0, 10);
+                break;
+            case GLFW_KEY_G:
+                turretHandler(&turret["turretcanon"], 0, 0, -10);
+                break;
+            case GLFW_KEY_SPACE:
+                fireTurret(&turret["turretcanon"]);
+                break;
+            case GLFW_KEY_M:
+                if(brickfalltimer <= 2)
+                {
+                  brickfalltimer += 0.1;
+                  brickformtimer += 0.1;
+                }
+                break;
+            case GLFW_KEY_N:
+                if(brickfalltimer >= 0.1)
+                {
+                  brickfalltimer -= 0.1;
+                  brickformtimer -= 0.5;
+                }
+                break;
+            case GLFW_KEY_EQUAL:
+                if(screen_zoom <= 5)
+                {
+                  screen_zoom += 0.5;
+                }
+                break;
+            case GLFW_KEY_MINUS:
+                if(screen_zoom >= 2)
+                {
+                  screen_zoom -= 0.5;
+                  screen_center_x = 0;
+                  screen_center_y = 0;
+                }
+            default:
+                break;
         }
     }
     else if (action == GLFW_PRESS) {
@@ -563,6 +643,12 @@ void draw (GLFWwindow *window, int width, int height)
   // Matrices.view = glm::lookAt( eye, target, up ); // Rotating Camera for 3D
   //  Don't change unless you are sure!!
   Matrices.view = glm::lookAt(glm::vec3(0,0,1), glm::vec3(0,0,0), glm::vec3(0,1,0)); // Fixed camera for 2D (ortho) in XY plane
+
+  float top = (screen_center_y + 4) / screen_zoom;
+  float bottom = (screen_center_y - 4) / screen_zoom;
+  float left = (screen_center_x - 4) / screen_zoom;
+  float right = (screen_center_x + 4) / screen_zoom;
+  Matrices.projection = glm::ortho(left, right, bottom, top, 0.1f, 500.0f);
 
   // Compute ViewProject matrix as view/camera might not be changed for this frame (basic scenario)
   //  Don't change unless you are sure!!
