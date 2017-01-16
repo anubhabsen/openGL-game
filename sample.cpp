@@ -430,6 +430,26 @@ float camera_rotation_angle = 90;
 /* Render the scene with openGL */
 /* Edit this function according to your assignment */
 
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+  if (yoffset==-1)
+  {
+    if(screen_zoom <= 5)
+    {
+      screen_zoom += 1;
+    }
+  }
+  else if(yoffset==1)
+  {
+    if(screen_zoom >= 2)
+    {
+      screen_zoom -= 1;
+      screen_center_x = 0;
+      screen_center_y = 0;
+    }
+  }
+}
+
 void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (action == GLFW_RELEASE) {
@@ -737,6 +757,7 @@ void draw (GLFWwindow *window, int width, int height)
     //glPopMatrix ();
   }
 
+  glfwSetScrollCallback(window, scroll_callback);
   glfwGetWindowSize(window, &width, &height);
   glfwGetCursorPos(window, &x, &y);
   float xcoord = x / width * 8 - 4 - turret["turretcanon"].x;
