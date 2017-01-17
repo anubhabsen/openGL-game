@@ -958,12 +958,16 @@ void blockFall()
     for (map<string, Sprite>::iterator it1 = collect_baskets.begin(); it1 != collect_baskets.end(); it1++)
     {
       string current_basket = it1->first;
-      if(bricks[current].y <= -3.7 && bricks[current].exists == 1 && bricks[current].x <= collect_baskets[current_basket].x + 0.5 && bricks[current].x >= collect_baskets[current_basket].x - 0.5)
+      if(bricks[current].y <= -3.7 && bricks[current].exists == 1 && bricks[current].x <= collect_baskets[current_basket].x + 0.26 && bricks[current].x >= collect_baskets[current_basket].x - 0.26)
       {
         if(bricks[current].color.r == collect_baskets[current_basket].color.r && bricks[current].color.g == collect_baskets[current_basket].color.g && bricks[current].color.b == collect_baskets[current_basket].color.b)
         {
-          score += 10;
-          bricks[current].exists = 0;
+          if(collect_baskets["redbasket"].x - collect_baskets["greenbasket"].x > 1 || collect_baskets["redbasket"].x - collect_baskets["greenbasket"].x < -1)
+          {
+            score += 10;
+            bricks[current].exists = 0;
+            cout<<"done"<<endl;
+          }
         }
         else
         {
