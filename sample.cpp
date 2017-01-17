@@ -49,7 +49,7 @@ COLOR steel = {196 / 255.0, 231 / 255.0, 249 / 255.0};
 
 struct Sprite {
     string name;
-    int exists;
+    int exists, mirror;
     COLOR color;
     float x, y;
     float height, width, angle;
@@ -322,6 +322,7 @@ void createRectangle (string name, float x, float y, float width, float height, 
   elem.color = colour;
   elem.exists = 1;
   elem.name = name;
+  elem.mirror = 0;
   elem.object = rectangle;
   elem.x = x;
   elem.y = y;
@@ -771,7 +772,7 @@ void draw (GLFWwindow *window, int width, int height)
   for(map<string,Sprite>::iterator it=laser.begin(); it!=laser.end(); it++)
   {
     string current = it->first; //The name of the current object
-    if(laser[current].exists==0)
+    if(laser[current].exists == 0)
     {
         continue;
     }
@@ -939,7 +940,11 @@ void laserTimer()
       string current_mirror = it1->first;
       if(dist(laser[current].x, laser[current].y, mirror[current_mirror].x, mirror[current_mirror].y) <= sqrt(18.25 + 12 * cos((laser[current].angle + mirror[current_mirror].angle) * M_PI / 180)) / 10 && dist(laser[current].x, laser[current].y, mirror[current_mirror].x, mirror[current_mirror].y) >= sqrt(18.25 - 12 * cos((laser[current].angle + mirror[current_mirror].angle) * M_PI / 180)) / 10)
       {
-        laser[current].angle += 2 * (mirror[current_mirror].angle - laser[current].angle) + 180;
+        if((laser[current].mirror == 1 && mirror[current_mirror].name != "mirror1") || (laser[current].mirror == 2 && mirror[current_mirror].name != "mirror2") || (laser[current].mirror == 3 && mirror[current_mirror].name != "mirror3") || (laser[current].mirror == 4 && mirror[current_mirror].name != "mirror4") || laser[current].mirror == 0)
+        {
+          laser[current].angle += 2 * (mirror[current_mirror].angle - laser[current].angle) + 180;
+          laser[current].mirror = (int)mirror[current_mirror].name[6];
+        }
       }
     }
     if(laser[current].x > 4 || laser[current].x < -4 || laser[current].y > 4 || laser[current].y < -4)
@@ -966,7 +971,6 @@ void blockFall()
           {
             score += 10;
             bricks[current].exists = 0;
-            cout<<"done"<<endl;
           }
         }
         else
