@@ -64,6 +64,9 @@ map <string, Sprite> collect_baskets;
 map <string, Sprite> turret;
 map <string, Sprite> laser;
 map <string, Sprite> mirror;
+map <string, Sprite> scoredisp;
+map <string, Sprite> scoredisp10;
+map <string, Sprite> scoredisp100;
 
 GLuint programID;
 int laserfired = 0;
@@ -349,6 +352,18 @@ void createRectangle (string name, float x, float y, float width, float height, 
   else if(type == "mirror")
   {
     mirror[name] = elem;
+  }
+  else if(type == "scoredisp")
+  {
+    scoredisp[name] = elem;
+  }
+  else if(type == "scoredisp10")
+  {
+    scoredisp[name] = elem;
+  }
+  else if(type == "scoredisp100")
+  {
+    scoredisp[name] = elem;
   }
 }
 
@@ -821,6 +836,84 @@ void draw (GLFWwindow *window, int width, int height)
 
     //glPopMatrix ();
   }
+  for(map<string,Sprite>::iterator it=scoredisp.begin(); it!=scoredisp.end(); it++)
+  {
+    string current = it->first; //The name of the current object
+    if(scoredisp[current].exists==0)
+    {
+        continue;
+    }
+    glm::mat4 MVP;  // MVP = Projection * View * Model
+
+    Matrices.model = glm::mat4(1.0f);
+
+    /* Render your scene */
+    glm::mat4 ObjectTransform;
+    glm::mat4 translateObject = glm::translate (glm::vec3(scoredisp[current].x, scoredisp[current].y, 0.0f)); // glTranslatef
+    glm::mat4 rotateTriangle = glm::rotate((float)((scoredisp[current].angle)*M_PI/180.0f), glm::vec3(0,0,1));  // rotate about vector (1,0,0)
+
+    ObjectTransform=translateObject*rotateTriangle;
+    Matrices.model *= ObjectTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    draw3DObject(scoredisp[current].object);
+
+    //glPopMatrix ();
+  }
+  for(map<string,Sprite>::iterator it=scoredisp10.begin(); it!=scoredisp10.end(); it++)
+  {
+    string current = it->first; //The name of the current object
+    if(scoredisp10[current].exists==0)
+    {
+        continue;
+    }
+    glm::mat4 MVP;  // MVP = Projection * View * Model
+
+    Matrices.model = glm::mat4(1.0f);
+
+    /* Render your scene */
+    glm::mat4 ObjectTransform;
+    glm::mat4 translateObject = glm::translate (glm::vec3(scoredisp10[current].x, scoredisp10[current].y, 0.0f)); // glTranslatef
+    glm::mat4 rotateTriangle = glm::rotate((float)((scoredisp10[current].angle)*M_PI/180.0f), glm::vec3(0,0,1));  // rotate about vector (1,0,0)
+
+    ObjectTransform=translateObject*rotateTriangle;
+    Matrices.model *= ObjectTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    draw3DObject(scoredisp10[current].object);
+
+    //glPopMatrix ();
+  }
+  for(map<string,Sprite>::iterator it=scoredisp100.begin(); it!=scoredisp100.end(); it++)
+  {
+    string current = it->first; //The name of the current object
+    if(scoredisp100[current].exists==0)
+    {
+        continue;
+    }
+    glm::mat4 MVP;  // MVP = Projection * View * Model
+
+    Matrices.model = glm::mat4(1.0f);
+
+    /* Render your scene */
+    glm::mat4 ObjectTransform;
+    glm::mat4 translateObject = glm::translate (glm::vec3(scoredisp100[current].x, scoredisp100[current].y, 0.0f)); // glTranslatef
+    glm::mat4 rotateTriangle = glm::rotate((float)((scoredisp100[current].angle)*M_PI/180.0f), glm::vec3(0,0,1));  // rotate about vector (1,0,0)
+
+    ObjectTransform=translateObject*rotateTriangle;
+    Matrices.model *= ObjectTransform;
+    MVP = VP * Matrices.model; // MVP = p * V * M
+
+    glUniformMatrix4fv(Matrices.MatrixID, 1, GL_FALSE, &MVP[0][0]);
+
+    draw3DObject(scoredisp100[current].object);
+
+    //glPopMatrix ();
+  }
 }
 
 /* Initialise glfw window, I/O callbacks and the renderer to use */
@@ -886,6 +979,30 @@ void initGL (GLFWwindow* window, int width, int height)
   createRectangle("mirror2", 3, -2.5, 0.05, 0.8, steel, "mirror", -45);
   createRectangle("mirror3", 1, 1.5, 0.05, 0.8, steel, "mirror", 30);
   createRectangle("mirror4", 1, -1.5, 0.05, 0.8, steel, "mirror", -30);
+
+  createRectangle("score1.1", 1, 3.5, 0.2, 0.05, steel, "scoredisp", 0);
+  createRectangle("score1.2", 1, 3.3, 0.2, 0.05, steel, "scoredisp", 0);
+  createRectangle("score1.3", 1, 3.1, 0.2, 0.05, steel, "scoredisp", 0);
+  createRectangle("score1.4", 0.9, 3.4, 0.05, 0.2, steel, "scoredisp", 0);
+  createRectangle("score1.5", 1.1, 3.4, 0.05, 0.2, steel, "scoredisp", 0);
+  createRectangle("score1.6", 0.9, 3.2, 0.05, 0.2, steel, "scoredisp", 0);
+  createRectangle("score1.7", 1.1, 3.2, 0.05, 0.2, steel, "scoredisp", 0);
+
+  createRectangle("score2.1", 0.7, 3.5, 0.2, 0.05, steel, "scoredisp10", 0);
+  createRectangle("score2.2", 0.7, 3.3, 0.2, 0.05, steel, "scoredisp10", 0);
+  createRectangle("score2.3", 0.7, 3.1, 0.2, 0.05, steel, "scoredisp10", 0);
+  createRectangle("score2.4", 0.6, 3.4, 0.05, 0.2, steel, "scoredisp10", 0);
+  createRectangle("score2.5", 0.8, 3.4, 0.05, 0.2, steel, "scoredisp10", 0);
+  createRectangle("score2.6", 0.6, 3.2, 0.05, 0.2, steel, "scoredisp10", 0);
+  createRectangle("score2.7", 0.8, 3.2, 0.05, 0.2, steel, "scoredisp10", 0);
+
+  createRectangle("score3.1", 0.4, 3.5, 0.2, 0.05, steel, "scoredisp100", 0);
+  createRectangle("score3.2", 0.4, 3.3, 0.2, 0.05, steel, "scoredisp100", 0);
+  createRectangle("score3.3", 0.4, 3.1, 0.2, 0.05, steel, "scoredisp100", 0);
+  createRectangle("score3.4", 0.3, 3.4, 0.05, 0.2, steel, "scoredisp100", 0);
+  createRectangle("score3.5", 0.5, 3.4, 0.05, 0.2, steel, "scoredisp100", 0);
+  createRectangle("score3.6", 0.3, 3.2, 0.05, 0.2, steel, "scoredisp100", 0);
+  createRectangle("score3.7", 0.5, 3.2, 0.05, 0.2, steel, "scoredisp100", 0);
 
   // Create and compile our GLSL program from the shaders
   programID = LoadShaders("Sample_GL.vert", "Sample_GL.frag");
