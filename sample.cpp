@@ -69,12 +69,13 @@ map <string, Sprite> scoredisp;
 GLuint programID;
 int laserfired = 0;
 int numblocks = 0;
-int score = 0;
+int score = 20;
 float brickfalltimer = 0.7;
 float brickformtimer = 3.9;
 float screen_zoom = 1;
 float screen_center_y = 0;
 float screen_center_x = 0;
+int health = 100;
 
 void turretHandler(Sprite *gun, float dx, float dy, float angle)
 {
@@ -1033,6 +1034,12 @@ void blockFall()
         else
         {
           score -=  2;
+          health -= 5;
+          if(health <= 0)
+          {
+            cout<<"You ran out of health :("<<endl;
+            exit(0);
+          }
           bricks[current].exists = 0;
         }
       }
@@ -1391,6 +1398,7 @@ void Dispscore()
   {
     temp *= -1;
     scoredisp["sign"].exists = 1;
+    cout<<scoredisp["sign"].exists<<endl;
   }
   if(temp <= 999)
   {
