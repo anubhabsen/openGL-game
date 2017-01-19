@@ -391,16 +391,35 @@ void keyboardChar (GLFWwindow* window, unsigned int key)
 /* Executed when a mouse button is pressed/released */
 void mouseButton (GLFWwindow* window, int button, int action, int mods)
 {
-    switch (button) {
-        case GLFW_MOUSE_BUTTON_LEFT:
-            fireTurret(&turret["turretcanon"]);
-            break;
-        case GLFW_MOUSE_BUTTON_RIGHT:
-            if (action == GLFW_RELEASE) {
-            }
-            break;
-        default:
-            break;
+    double width, height, x, y;
+    // glfwGetWindowSize(window, &width, &height);
+    glfwGetCursorPos(window, &x, &y);
+    float convx = (x / 900) * 8 - 4;
+    float convy = (y / 600) * 8 - 4;
+    if(action == GLFW_REPEAT || action == GLFW_RELEASE)
+    {
+      switch (button) {
+          case GLFW_MOUSE_BUTTON_LEFT:
+              if(convy >= 3.55 && convy <= 4.13 && convx <= collect_baskets["redbasket"].x + 0.25 && convx >= collect_baskets["redbasket"].x - 0.25)
+              {
+                collect_baskets["redbasket"].x = convx;
+              }
+              if(convy >= 3.55 && convy <= 4.13 && convx <= collect_baskets["greenbasket"].x + 0.25 && convx >= collect_baskets["greenbasket"].x - 0.25)
+              {
+                collect_baskets["greenbasket"].x = convx;
+              }
+              else
+              {
+                fireTurret(&turret["turretcanon"]);
+              }
+              break;
+          case GLFW_MOUSE_BUTTON_RIGHT:
+              if (action == GLFW_RELEASE) {
+              }
+              break;
+          default:
+              break;
+      }
     }
 }
 
