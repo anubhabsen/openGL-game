@@ -887,9 +887,9 @@ void draw (GLFWwindow *window, int width, int height)
     {
       collect_baskets["greenbasket"].x = convx;
     }
+    convy = -1 * convy;
     if(convx <= -3.75 && convy <= turret["turretbase"].y + 0.25 && convy >= turret["turretbase"].y - 0.25)
     {
-      cout<<convy<<endl;
       turret["turretbase"].y = convy;
       turret["turretcanon"].y = convy;
     }
