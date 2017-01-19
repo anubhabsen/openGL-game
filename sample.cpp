@@ -918,6 +918,8 @@ void initGL (GLFWwindow* window, int width, int height)
   createRectangle("mirror3", 1, 1.5, 0.05, 0.8, steel, "mirror", 30);
   createRectangle("mirror4", 1, -1.5, 0.05, 0.8, steel, "mirror", -30);
 
+  createRectangle("sign", 0.7, 3.3, 0.2, 0.05, steel, "scoredisp", 0);
+
   createRectangle("score1.1", 1, 3.5, 0.2, 0.05, steel, "scoredisp", 0);
   createRectangle("score1.2", 1, 3.3, 0.2, 0.05, steel, "scoredisp", 0);
   createRectangle("score1.3", 1, 3.1, 0.2, 0.05, steel, "scoredisp", 0);
@@ -1388,9 +1390,11 @@ void Dispscore()
   if(temp < 0)
   {
     temp *= -1;
+    scoredisp["sign"].exists = 1;
   }
   if(temp <= 999)
   {
+    scoredisp["sign"].exists = 0;
     disp1(temp % 10);
     temp /= 10;
     disp10(temp % 100);
@@ -1399,6 +1403,7 @@ void Dispscore()
   }
   else
   {
+    scoredisp["sign"].exists = 0;
     disp1(9);
     disp10(9);
     disp100(9);
