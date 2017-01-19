@@ -404,7 +404,7 @@ void mouseButton (GLFWwindow* window, int button, int action, int mods)
               {
                 // continue;
               }
-              if(convy >= 3.55 && convy <= 4.13 && convx <= collect_baskets["greenbasket"].x + 0.25 && convx >= collect_baskets["greenbasket"].x - 0.25)
+              else if(convy >= 3.55 && convy <= 4.13 && convx <= collect_baskets["greenbasket"].x + 0.25 && convx >= collect_baskets["greenbasket"].x - 0.25)
               {
                 // continue;
               }
@@ -883,7 +883,7 @@ void draw (GLFWwindow *window, int width, int height)
     {
       collect_baskets["redbasket"].x = convx;
     }
-    if(convy >= 3.55 && convy <= 4.13 && convx <= collect_baskets["greenbasket"].x + 0.25 && convx >= collect_baskets["greenbasket"].x - 0.25)
+    else if(convy >= 3.55 && convy <= 4.13 && convx <= collect_baskets["greenbasket"].x + 0.25 && convx >= collect_baskets["greenbasket"].x - 0.25)
     {
       collect_baskets["greenbasket"].x = convx;
     }
