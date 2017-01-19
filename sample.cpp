@@ -402,11 +402,11 @@ void mouseButton (GLFWwindow* window, int button, int action, int mods)
           case GLFW_MOUSE_BUTTON_LEFT:
               if(convy >= 3.55 && convy <= 4.13 && convx <= collect_baskets["redbasket"].x + 0.25 && convx >= collect_baskets["redbasket"].x - 0.25)
               {
-                collect_baskets["redbasket"].x = convx;
+                // continue;
               }
               if(convy >= 3.55 && convy <= 4.13 && convx <= collect_baskets["greenbasket"].x + 0.25 && convx >= collect_baskets["greenbasket"].x - 0.25)
               {
-                collect_baskets["greenbasket"].x = convx;
+                // continue;
               }
               else
               {
@@ -871,6 +871,28 @@ void draw (GLFWwindow *window, int width, int height)
     draw3DObject(scoredisp[current].object);
 
     //glPopMatrix ();
+  }
+
+  float convx = (x / 900) * 8 - 4;
+  float convy = (y / 600) * 8 - 4;
+
+  int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+  if (state == GLFW_PRESS)
+  {
+    if(convy >= 3.55 && convy <= 4.13 && convx <= collect_baskets["redbasket"].x + 0.25 && convx >= collect_baskets["redbasket"].x - 0.25)
+    {
+      collect_baskets["redbasket"].x = convx;
+    }
+    if(convy >= 3.55 && convy <= 4.13 && convx <= collect_baskets["greenbasket"].x + 0.25 && convx >= collect_baskets["greenbasket"].x - 0.25)
+    {
+      collect_baskets["greenbasket"].x = convx;
+    }
+    if(convx <= -3.75 && convy <= turret["turretbase"].y + 0.25 && convy >= turret["turretbase"].y - 0.25)
+    {
+      cout<<convy<<endl;
+      turret["turretbase"].y = convy;
+      turret["turretcanon"].y = convy;
+    }
   }
 }
 
