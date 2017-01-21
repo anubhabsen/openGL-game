@@ -81,6 +81,7 @@ float brickformtimer = 3.9;
 float screen_zoom = 1;
 float screen_center_y = 0;
 float screen_center_x = 0;
+double last_update_time_lasershot = 0, current_time_lasershot;
 int health = 100;
 
 void turretHandler(Sprite *gun, float dx, float dy, float angle)
@@ -540,7 +541,12 @@ void keyboard (GLFWwindow* window, int key, int scancode, int action, int mods)
                 turretHandler(&turret["turretcanon"], 0, 0, -10);
                 break;
             case GLFW_KEY_SPACE:
-                fireTurret(&turret["turretcanon"]);
+                current_time_lasershot = glfwGetTime();
+                if ((current_time_lasershot - last_update_time_lasershot) >= 1)
+                {
+                    fireTurret(&turret["turretcanon"]);
+                    last_update_time_lasershot = current_time_lasershot;
+                }
                 break;
             case GLFW_KEY_M:
                 if(brickfalltimer <= 2)
@@ -1502,46 +1508,46 @@ int main(int argc, char **argv)
 
   //Music
 
-  mpg123_handle *mh;
-  unsigned char *buffer;
-  size_t buffer_size;
-  size_t done;
-  int err;
+  // mpg123_handle *mh;
+  // unsigned char *buffer;
+  // size_t buffer_size;
+  // size_t done;
+  // int err;
 
-  int driver;
-  ao_device *dev;
+  // int driver;
+  // ao_device *dev;
 
-  ao_sample_format format;
-  int channels, encoding;
-  long rate;
+  // ao_sample_format format;
+  // int channels, encoding;
+  // long rate;
 
-  if(argc < 2)
-      exit(0);
+  // if(argc < 2)
+  //     exit(0);
 
-  /* initializations */
-  ao_initialize();
-  driver = ao_default_driver_id();
-  mpg123_init();
-  mh = mpg123_new(NULL, &err);
-  buffer_size = 64;
-  buffer = (unsigned char*) malloc(buffer_size * sizeof(unsigned char));
+  // /* initializations */
+  // ao_initialize();
+  // driver = ao_default_driver_id();
+  // mpg123_init();
+  // mh = mpg123_new(NULL, &err);
+  // buffer_size = 64;
+  // buffer = (unsigned char*) malloc(buffer_size * sizeof(unsigned char));
 
-  /* open the file and get the decoding format */
-  mpg123_open(mh, argv[1]);
-  mpg123_getformat(mh, &rate, &channels, &encoding);
+  // /* open the file and get the decoding format */
+  // mpg123_open(mh, argv[1]);
+  // mpg123_getformat(mh, &rate, &channels, &encoding);
 
-  /* set the output format and open the output device */
-  format.bits = mpg123_encsize(encoding) * BITS;
-  format.rate = rate;
-  format.channels = channels;
-  format.byte_format = AO_FMT_NATIVE;
-  format.matrix = 0;
-  dev = ao_open_live(driver, &format, NULL);
+  // /* set the output format and open the output device */
+  // format.bits = mpg123_encsize(encoding) * BITS;
+  // format.rate = rate;
+  // format.channels = channels;
+  // format.byte_format = AO_FMT_NATIVE;
+  // format.matrix = 0;
+  // dev = ao_open_live(driver, &format, NULL);
 
-  /* decode and play */
-  if (mpg123_read(mh, buffer, buffer_size, &done) == MPG123_OK)
-    ao_play(dev, buffer, done);
-  else mpg123_seek(mh, 0, SEEK_SET);
+  // /* decode and play */
+  // if (mpg123_read(mh, buffer, buffer_size, &done) == MPG123_OK)
+  //   ao_play(dev, buffer, done);
+  // else mpg123_seek(mh, 0, SEEK_SET);
 
   // Music ends
 
