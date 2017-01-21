@@ -11,6 +11,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+//Music
+
+#include <ao/ao.h>
+#include <mpg123.h>
+#define BITS 8
+
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
@@ -1493,6 +1499,51 @@ int main(int argc, char **argv)
   GLFWwindow *window = initGLFW(width, height);
 
   initGL(window, width, height);
+
+  //Music
+
+  mpg123_handle *mh;
+  unsigned char *buffer;
+  size_t buffer_size;
+  size_t done;
+  int err;
+
+  int driver;
+  ao_device *dev;
+
+  ao_sample_format format;
+  int channels, encoding;
+  long rate;
+
+  if(argc < 2)
+      exit(0);
+
+  /* initializations */
+  ao_initialize();
+  driver = ao_default_driver_id();
+  mpg123_init();
+  mh = mpg123_new(NULL, &err);
+  buffer_size = 64;
+  buffer = (unsigned char*) malloc(buffer_size * sizeof(unsigned char));
+
+  /* open the file and get the decoding format */
+  mpg123_open(mh, argv[1]);
+  mpg123_getformat(mh, &rate, &channels, &encoding);
+
+  /* set the output format and open the output device */
+  format.bits = mpg123_encsize(encoding) * BITS;
+  format.rate = rate;
+  format.channels = channels;
+  format.byte_format = AO_FMT_NATIVE;
+  format.matrix = 0;
+  dev = ao_open_live(driver, &format, NULL);
+
+  /* decode and play */
+  if (mpg123_read(mh, buffer, buffer_size, &done) == MPG123_OK)
+    ao_play(dev, buffer, done);
+  else mpg123_seek(mh, 0, SEEK_SET);
+
+  // Music ends
 
   double last_update_time_brick_form = glfwGetTime(), current_time_brick_form, current_time_laser, last_update_time_laser = glfwGetTime();
   double last_update_time_brick_fall = glfwGetTime(), current_time_brick_fall;
