@@ -1449,18 +1449,16 @@ void Dispscore()
   int temp = score;
   if(temp < 0)
   {
-    temp *= -1;
-    scoredisp["sign"].exists = 1;
-    cout<<scoredisp["sign"].exists<<endl;
+    exit(0);
   }
   if(temp <= 999)
   {
     scoredisp["sign"].exists = 0;
     disp1(temp % 10);
     temp /= 10;
-    disp10(temp % 100);
+    disp10(temp % 10);
     temp /= 10;
-    disp100(temp % 1000);
+    disp100(temp % 10);
   }
   else
   {
