@@ -32,3 +32,4 @@ Scoring System
 * Shooting the black coloured blocks fetch 10 points and other blocks fetch -5
 * Initial health is 100 and game is over when it reaches 0
 * When the block is missed and reaches the very end of the screen (-5), -1 points are given
+* The baskets when overlapped dont collect blocks
