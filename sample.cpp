@@ -967,7 +967,7 @@ void initGL (GLFWwindow* window, int width, int height)
   createRectangle("greenbasket", 2, -3.8, 0.5, 0.5, green, "basket", 0);
   createRectangle("turretcanon", -4, 0, 1, 0.2, steel, "turret", 0);
   createRectangle("turretbase", -4, 0, 0.5, 0.5, black, "turret", 0);
-  createRectangle("mirror1", 3, 3, 0.05, 0.8, steel, "mirror", 45);
+  createRectangle("mirror1", 3, 3, 0.05, 0.8, steel, "mirror", 0);
   createRectangle("mirror2", 3, -2.5, 0.05, 0.8, steel, "mirror", -45);
   createRectangle("mirror3", 1, 1.5, 0.05, 0.8, steel, "mirror", 30);
   createRectangle("mirror4", 1, -1.5, 0.05, 0.8, steel, "mirror", -30);
@@ -1048,8 +1048,15 @@ void laserTimer()
     }
     for(map<string, Sprite>::iterator it1 = mirror.begin(); it1 != mirror.end(); it1++)
     {
+
       string current_mirror = it1->first;
-      if(dist(laser[current].x, laser[current].y, mirror[current_mirror].x, mirror[current_mirror].y) <= sqrt(18.25 + 12 * cos((laser[current].angle + mirror[current_mirror].angle) * M_PI / 180)) / 10 && dist(laser[current].x, laser[current].y, mirror[current_mirror].x, mirror[current_mirror].y) >= sqrt(18.25 - 12 * cos((laser[current].angle + mirror[current_mirror].angle) * M_PI / 180)) / 10)
+      float w1 = laser[current].width / 2;
+      float w2 = mirror[current_mirror].width / 2;
+      float bulangle = laser[current].angle;
+      float mirangle = mirror[current_mirror].angle;
+      float h1 = laser[current].height / 2;
+      float h2 = laser[current].height / 2;
+      if(dist(laser[current].x, laser[current].y, mirror[current_mirror].x, mirror[current_mirror].y) <= sqrt(w1 * w1 + w2 * w2 - 2 * w1 * w2 * cos((90.0 - bulangle + mirangle) * M_PI / 180)) + h1 + h2)
       {
         if((laser[current].mirror == 1 && mirror[current_mirror].name != "mirror1") || (laser[current].mirror == 2 && mirror[current_mirror].name != "mirror2") || (laser[current].mirror == 3 && mirror[current_mirror].name != "mirror3") || (laser[current].mirror == 4 && mirror[current_mirror].name != "mirror4") || laser[current].mirror == 0)
         {
@@ -1504,6 +1511,39 @@ int main(int argc, char **argv)
 
   initGL(window, width, height);
 
+  mpg123_handle *mh;
+   unsigned char *buffer;
+   size_t buffer_size;
+   size_t done;
+   int err;
+
+   int driver;
+   ao_device *dev;
+
+   ao_sample_format format;
+   int channels, encoding;
+   long rate;
+
+   /* initializations */
+   ao_initialize();
+   driver = ao_default_driver_id();
+   mpg123_init();
+   mh = mpg123_new(NULL, &err);
+   buffer_size = 3000;
+   buffer = (unsigned char*) malloc(buffer_size * sizeof(unsigned char));
+
+   /* open the file and get the decoding format */
+   mpg123_open(mh, "lav.mp3");
+   mpg123_getformat(mh, &rate, &channels, &encoding);
+
+   /* set the output format and open the output device */
+   format.bits = mpg123_encsize(encoding) * BITS;
+   format.rate = rate;
+   format.channels = channels;
+   format.byte_format = AO_FMT_NATIVE;
+   format.matrix = 0;
+   dev = ao_open_live(driver, &format, NULL);
+
   double last_update_time_brick_form = glfwGetTime(), current_time_brick_form, current_time_laser, last_update_time_laser = glfwGetTime();
   double last_update_time_brick_fall = glfwGetTime(), current_time_brick_fall;
   /* Draw in loop */
@@ -1513,6 +1553,12 @@ int main(int argc, char **argv)
   while (!glfwWindowShouldClose(window)) {
 
     // OpenGL Draw commands
+
+    if (mpg123_read(mh, buffer, buffer_size, &done) == MPG123_OK)
+      ao_play(dev, (char *)buffer, done);
+    else
+      mpg123_seek(mh, 0, SEEK_SET);
+  
     draw(window, width, height);
     // draw3DObject draws the VAO given to it using current MVP matrix
 
@@ -1549,5 +1595,11 @@ int main(int argc, char **argv)
     }
   }
   glfwTerminate();
+  free(buffer);
+  ao_close(dev);
+  mpg123_close(mh);
+  mpg123_delete(mh);
+  mpg123_exit();
+  ao_shutdown();
   return 0;
 }
